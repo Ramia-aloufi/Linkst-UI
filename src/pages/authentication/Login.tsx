@@ -1,7 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button } from "@mui/material";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import z from "zod";
+import type { AppDispatch } from "../../redux/Store";
+import { LoginUser } from "../../redux/auth/AuthService";
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address" }),
@@ -14,6 +17,7 @@ const LoginSchema = z.object({
 type Inputs = z.infer<typeof LoginSchema>;
 
 const Login = () => {
+    const dispatch = useDispatch<AppDispatch>();
   const {
     register,
     handleSubmit,
@@ -23,7 +27,7 @@ const Login = () => {
   });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+    dispatch(LoginUser(data));
   };
 
   return (

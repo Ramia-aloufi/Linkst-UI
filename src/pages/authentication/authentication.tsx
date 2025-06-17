@@ -1,6 +1,6 @@
 import { Card, Grid } from "@mui/material";
-import Login from './Login'; // adjust path if needed
-import Signup from "./Signup";
+// import Signup from "./Signup";
+import Login from "./Login";
 
 const Authentication = () => {
   return (
@@ -21,8 +21,8 @@ const Authentication = () => {
                 <p>Connecting Lives, Sharing Stories: Your Social World, Your Way</p>
               </div>
               <div className="">
-              {/* <Login /> */}
-              <Signup />
+              <Login />
+              {/* <Signup /> */}
               </div>
 
             </Card>
