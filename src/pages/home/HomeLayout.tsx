@@ -15,8 +15,7 @@ const HomeLayout = () => {
         <Outlet />
       </Grid>
       <Grid size={3}>
-        <Rightbar />
-
+       {location.pathname =="/" && <Rightbar />}
       </Grid>
 
     </Grid>

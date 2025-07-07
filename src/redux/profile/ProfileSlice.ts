@@ -1,32 +1,31 @@
 import { createSlice, isRejectedWithValue } from "@reduxjs/toolkit";
-import { LoginUser, SignupUser } from "./AuthService";
+import type { User } from "../../model/User";
+import { GetUserProfile, UpdateUserProfile } from "./ProfileService";
 import type { ApiError } from "../../model/ApiError";
 
-
-type AuthTypes = {
-    token: string | null;
-    loading: boolean;
+type ProfileSliceType = {
+    userProfile: User | null,
+    loading: boolean,
     error: ApiError | null,
 };
 
 
-const initialState: AuthTypes = {
-    token: null,
+const initialState: ProfileSliceType = {
+    userProfile: null,
     loading: false,
     error: null,
 };
-
-const AuthSlice = createSlice({
-    name: 'auth',
+const ProfileSlice = createSlice({
+    name: 'profile',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(LoginUser.fulfilled, (state, action) => {
-                state.token = action.payload;
+            .addCase(GetUserProfile.fulfilled, (state, action) => {
+                state.userProfile = action.payload;
             })
-            .addCase(SignupUser.fulfilled, (state, action) => {
-                state.token = action.payload;
+            .addCase(UpdateUserProfile.fulfilled, (state, action) => {
+                state.userProfile = { ...state.userProfile, ...action.payload };
             })
             .addMatcher(
                 (action) => action.type.endsWith('/pending'),
@@ -40,7 +39,7 @@ const AuthSlice = createSlice({
                 (state) => {
                     state.loading = false;
                     state.error = null;
-                                }
+                }
             )
             .addMatcher(
                 isRejectedWithValue,
@@ -52,4 +51,5 @@ const AuthSlice = createSlice({
     }
 });
 
-export const AuthReducer = AuthSlice.reducer;
+
+export const ProfileReducer = ProfileSlice.reducer;

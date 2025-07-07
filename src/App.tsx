@@ -1,7 +1,7 @@
 
 import './App.css'
 import Home from './components/Home';
-import Profile from './components/Profile';
+import Profile from './components/profile/Profile';
 import Reels from './components/Reels';
 import ReelsForm from './components/ReelsForm';
 import Authentication from './pages/authentication/authentication'
@@ -9,10 +9,11 @@ import HomeLayout from './pages/home/HomeLayout';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
+
 function App() {
 
   return (
-    <>
+        <>
       <Router>
         <Routes>
           <Route path="/" element={<HomeLayout />}>
