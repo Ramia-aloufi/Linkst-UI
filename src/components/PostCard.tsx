@@ -10,6 +10,10 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 import SendIcon from '@mui/icons-material/Send';
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../redux/Store";
+import { createComments, getComments } from "../redux/comment/CommentService";
+import { likePost } from "../redux/post/PostService";
 const CommentSchema = z.object({
   content: z.string().min(2).max(200),
 });
@@ -17,18 +21,26 @@ const CommentSchema = z.object({
 type input = z.infer<typeof CommentSchema>;
 const PostCard = ({post}:{post:Post}) => {
 
-  const { register, handleSubmit } = useForm<input>({
+  const {comments} = useSelector((state: RootState) => state.comment);
+   const dispatch = useDispatch<AppDispatch>();
+  const { register, handleSubmit ,reset } = useForm<input>({
     resolver: zodResolver(CommentSchema)
   });
 
   const [openComments, setOpenComments] = useState(false);
 
   const handleLike = () => {
-    // Here you would typically also update the likes in the backend
     console.log("Liked");
+    dispatch(likePost(post.id));
+  };
+  const handleCommentOpen = () => {
+    setOpenComments(!openComments);
+    dispatch(getComments(post.id));
+    reset();
   };
 
   const handleCommentSubmit = (data: input) => {
+    dispatch(createComments({ postId: post.id, comment: data.content }));
     console.log(data);
   };
 
@@ -45,7 +57,7 @@ const PostCard = ({post}:{post:Post}) => {
             <MoreVertIcon />
           </IconButton>
         }
-        title={post.user.firstName + " " + post.user.lastName}
+        title={post.user.fullName}
         subheader={new Date(post.createdAt).toLocaleDateString()}        
         />
       <CardContent>
@@ -61,23 +73,27 @@ const PostCard = ({post}:{post:Post}) => {
       />
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites" onClick={handleLike}>
-          <FavoriteIcon />
+          {post.likedByCurrentUser ? (
+            <FavoriteIcon color="error" />
+          ) : (
+            <FavoriteIcon />
+          )}
         </IconButton>
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>
-        <IconButton aria-label="comment" onClick={() => setOpenComments(!openComments)}>
+        <IconButton aria-label="comment" onClick={() => handleCommentOpen()}>
           <CommentIcon />
         </IconButton>
         {/* Display likes and comments count */}
-        {post.likes.length > 0 && (
+        {post.likeCount > 0 && (
           <Typography variant="body2" color="text.secondary" sx={{ marginLeft: 1 }}>
-            {post.likes.length} {post.likes.length === 1 ? 'like' : 'likes'}
+            {post.likeCount} {post.likeCount === 1 ? 'like' : 'likes'}
           </Typography>
         )}
-        {post.comments.length > 0 && (
+        {post.commentCount > 0 && (
           <Typography variant="body2" color="text.secondary" sx={{ marginLeft: 1 }}>
-            {post.comments.length} {post.comments.length === 1 ? 'comment' : 'comments'}
+            {post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}
           </Typography>
         )}
       </CardActions>
@@ -90,11 +106,44 @@ const PostCard = ({post}:{post:Post}) => {
               placeholder="Add a comment..."
               {...register("content")}
               sx={{ mb: 2 }}
-            />
-            <Button type="submit" variant="contained" color="primary">
+              InputProps={{
+                endAdornment: (
+                  <IconButton type="submit" color="primary">
+                    <SendIcon />
+                  </IconButton>
+                ),
+              }}
+            >
+            <Button type="submit" variant="outlined" color="primary">
               <SendIcon />
             </Button>
+            </TextField>
           </form>
+          {/* Display comments */}
+        {comments.length === 0 && (
+            <Typography variant="body2" color="text.secondary">
+              No comments yet.
+            </Typography>
+          )}
+          {comments.length > 0 && (
+            <div className="space-y-2 ">
+              {comments.map((comment, index) => (
+                <div className="flex items-center" key={index}>
+                  <div className="flex items-center">
+                    {/* Display user avatar and name */}
+                    <Avatar sx={{ bgcolor: red[500], width: 32, height: 32, marginRight: 1 }}>
+                      {comment.user.fullName.charAt(0)}{comment.user.fullName.charAt(1)}
+                    </Avatar>
+                    <strong>{comment.user.fullName}:</strong>
+                  </div>
+                <Typography variant="body2" sx={{ marginLeft: 3 }}>     
+
+                   {comment.comment}
+                </Typography>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       )}
     </Card>

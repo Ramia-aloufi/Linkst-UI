@@ -1,4 +1,4 @@
-import type { User } from "./User";
+
 
 export type CreatePost={
     content: string;
@@ -11,9 +11,12 @@ export type Post = {
     media: string; 
     caption: string; 
     createdAt: Date;
-    updatedAt: Date;
-    user: User;
-    likes:User[]
-    comments:User[]
-};
+    user: {
+        id: string;
+        fullName: string;
+    };
+    likeCount:number
+    commentCount:number
+    likedByCurrentUser:boolean
+}
 

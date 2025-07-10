@@ -1,17 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios, { AxiosError } from "axios";
-import { API_URL } from "../../config/Api";
+import { AxiosError } from "axios";
 import type { User } from "../../model/User";
 import type { ApiError } from "../../model/ApiError";
+import api from "../../config/Api";
 
 
 export const GetUserProfile = createAsyncThunk<User,void, { rejectValue: ApiError }>(
     'profile/getUserProfile',
     async (_, { rejectWithValue }) => {
         try {
-            const { data } = ((await axios.get(`${API_URL}user/profile`,{headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }})));
+            const { data } = await api.get(`user/profile`);
             return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;
@@ -28,11 +26,7 @@ export const UpdateUserProfile = createAsyncThunk<User, User, { rejectValue: Api
     'profile/updateUserProfile',
     async (userData: User, { rejectWithValue }) => {
         try {
-            const { data } = await axios.put(`${API_URL}user/profile`, userData, {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
-            });
+            const { data } = await api.put(`user/profile`, userData);
             return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;

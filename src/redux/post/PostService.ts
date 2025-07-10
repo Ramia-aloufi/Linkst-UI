@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios, { AxiosError } from "axios";
-import { API_URL } from "../../config/Api";
+import { AxiosError } from "axios";
+import api from "../../config/Api";
 import type { ApiError } from "../../model/ApiError";
 import type { Post } from "../../model/Post";
 
@@ -8,12 +8,7 @@ export const getPosts = createAsyncThunk<Post[], void, { rejectValue: ApiError }
     'post/getPosts',
     async (_, { rejectWithValue }) => {
         try {
-
-            const { data } = await axios.get(`${API_URL}post/all`, {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
-            });
+            const { data } = await api.get(`post/summaries`);
             return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;
@@ -30,10 +25,9 @@ export const createPost = createAsyncThunk<Post, FormData, { rejectValue: ApiErr
     async (postData, { rejectWithValue }) => {
         try {
 
-            const { data } = await axios.post(`${API_URL}post/create`, postData, {
+            const { data } = await api.post(`post/create`, postData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
             });
             return data;
@@ -51,11 +45,7 @@ export const deletePost = createAsyncThunk(
     'post/deletePost',
     async (postId, { rejectWithValue }) => {
         try {
-            await axios.delete(`${API_URL}posts/${postId}`, {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
-            });
+            await api.delete(`posts/${postId}`);
             return postId;
         } catch (err) {
             const error = err as AxiosError<ApiError>;
@@ -67,15 +57,11 @@ export const deletePost = createAsyncThunk(
         }
     }
 );
-export const likePost = createAsyncThunk(
+export const likePost = createAsyncThunk<Post, string>(
     'post/likePost',
     async (postId, { rejectWithValue }) => {
         try {
-            const { data } = await axios.post(`${API_URL}posts/${postId}/like`, {}, {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
-            });
+            const { data } = await api.get<Post>(`post/like/${postId}`);
             return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;
@@ -91,11 +77,7 @@ export const unlikePost = createAsyncThunk(
     'post/unlikePost',
     async (postId, { rejectWithValue }) => {
         try {
-            const { data } = await axios.post(`${API_URL}posts/${postId}/unlike`, {}, {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
-            });
+            const { data } = await api.post(`posts/${postId}/unlike`);
             return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;
