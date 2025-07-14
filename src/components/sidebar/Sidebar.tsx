@@ -4,6 +4,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import type { RootState } from "../../redux/Store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/linkst1.svg"
 const Sidebar = () => {
 
   const { userProfile } = useSelector((state: RootState) => state.profile);
@@ -12,10 +13,11 @@ const Sidebar = () => {
   return (
     <Card className="card h-screen flex flex-col justify-between ">
       <div className="space-y-4 pl-5">
-        <div className="py-5">
-          <span className="font-bold text-2xl">Community</span>
+        <div className="py-5 flex space-x-2">
+          <img src={logo} alt="Logo" width="30" height="30"/>
+          <span className="font-bold text-2xl">Linkst</span>
         </div>
-        <div className="space-y-8">
+        <div className="space-y-4">
           {SidebarMenu.map((item) => (
             <div  onClick={() => {navigate(item.path)}} key={item.name} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
               <item.icon />

@@ -11,7 +11,7 @@ const HomeLayout = () => {
       <Grid size={3} >
         <Sidebar />
       </Grid>
-      <Grid size={6} className="h-screen overflow-scroll">
+      <Grid size={6} className="h-screen overflow-scroll hideScrollBar">
         <Outlet />
       </Grid>
       <Grid size={3}>

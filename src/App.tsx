@@ -1,6 +1,7 @@
 
 import './App.css'
 import Home from './components/Home';
+import Message from './components/message/Message';
 import Profile from './components/profile/Profile';
 import Reels from './components/Reels';
 import ReelsForm from './components/ReelsForm';
@@ -23,6 +24,7 @@ function App() {
             <Route path="profile/:id" element={<Profile />} />
           </Route>
           <Route path="/login" element={<Authentication />} />
+          <Route path="/messages" element={<Message />} />
         </Routes>
       </Router>
 
