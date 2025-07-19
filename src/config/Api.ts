@@ -30,10 +30,12 @@ api.interceptors.response.use(
     const status = error.response?.status;
 
     if (status === 401) {
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem('token');
       // toast.error('Session expired. Please log in again.');
       window.location.href = '/login';
     } else if (status === 403) {
+       window.location.href = '/login';
+       localStorage.removeItem('token');
       // toast.error('You are not authorized to perform this action.');
     } else if (status === 500) {
       // toast.error('Server error. Please try again later.');

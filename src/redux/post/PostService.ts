@@ -3,12 +3,13 @@ import { AxiosError } from "axios";
 import api from "../../config/Api";
 import type { ApiError } from "../../model/ApiError";
 import type { Post } from "../../model/Post";
+import type { PaginateResponse } from "../../model/PaginateResponse";
 
-export const getPosts = createAsyncThunk<Post[], void, { rejectValue: ApiError }>(
+export const getPosts = createAsyncThunk<PaginateResponse<Post[]>, number, { rejectValue: ApiError }>(
     'post/getPosts',
-    async (_, { rejectWithValue }) => {
+    async (page, { rejectWithValue }) => {
         try {
-            const { data } = await api.get(`post/summaries`);
+            const { data } = await api.get(`post/summaries?page=${page}`);
             return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;

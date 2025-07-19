@@ -6,6 +6,7 @@ import Rightbar from "../../components/Rightbar"
 
 
 const HomeLayout = () => {
+
   return (
     <Grid container spacing={5} className="h-screen px-12">
       <Grid size={3} >

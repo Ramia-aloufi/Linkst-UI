@@ -22,34 +22,30 @@ export const SidebarMenu: SidebarMenuItem[] = [
         path: '/profile/1',
         icon: ProfileIcon,
     },
+        {
+        name: 'Community',
+        path: '/community',
+        icon: CommunityIcon, 
+    },
     {
         name: 'Reels',
         path: '/reels',
         icon: ReelsIcon,
     },
     {
-        name: 'Notifications',
-        path: '/notifications',
-        icon: NotificationsIcon,
+        name: 'Create Reels',
+        path: '/create-reels',
+        icon: AddBoxIcon,
     },
-        {
-        name: 'Community',
-        path: '/community',
-        icon: CommunityIcon, // Assuming you have a CommunityIcon component
-    },
-        {
+    {
         name: 'Message',
         path: '/messages',
         icon: MessageIcon,
     },
-        {
-        name: 'Profile',
-        path: '/profile/1',
-        icon: ProfileIcon,
+    {
+        name: 'Notifications',
+        path: '/notifications',
+        icon: NotificationsIcon,
     },
-        {
-        name: 'Create Reels',
-        path: '/create-reels',
-        icon: AddBoxIcon,
-    }
+
 ]

@@ -1,8 +1,22 @@
 import { Card, Grid } from "@mui/material";
 // import Signup from "./Signup";
 import Login from "./Login";
+import Signup from "./Signup";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import type { RootState } from "../../redux/Store";
 
 const Authentication = () => {
+  const [showLogin,setShowLogin] = useState(true)
+    const { token} = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
   return (
     <div>
       <Grid container >
@@ -21,8 +35,11 @@ const Authentication = () => {
                 <p>Connecting Lives, Sharing Stories: Your Social World, Your Way</p>
               </div>
               <div className="">
-              <Login />
-              {/* <Signup /> */}
+                {showLogin ?<Login /> : <Signup />}
+
+                <span onClick={()=>setShowLogin(false)}>create Account</span>
+              
+             
               </div>
 
             </Card>

@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { AppDispatch, RootState } from '../../redux/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost } from '../../redux/post/PostService';
+import type { User } from '../../model/User';
 
 
 
@@ -30,6 +31,7 @@ const style = {
 type CreatePostModalProps = {
   open: boolean;
   onClose: () => void;
+  user:User | null
 };
 
 
@@ -44,7 +46,7 @@ const PostSchema = z.object({
 type PostSchemaType = z.infer<typeof PostSchema>;
 
 
-const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
+const CreatePostModal = ({ open, onClose,user }: CreatePostModalProps) => {
   const { register, handleSubmit, watch, reset } = useForm<PostSchemaType>({
     resolver: zodResolver(PostSchema)
   });
@@ -88,10 +90,12 @@ const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="flex items-center  mb-4">
-            <Avatar sx={{ width: 40, height: 40, margin: '10px' }} />
+            <Avatar sx={{ width: 40, height: 40, margin: '10px' }} >
+              {user?.firstName.slice(0,2)}
+              </Avatar>
             <div className="flex flex-col">
-              <span className="text-gray-500 text-lg  font-bold">username</span>
-              <span className="text-gray-500 text-sm ">@username</span>
+              <span className="text-gray-500 text-lg  font-bold">{user?.firstName} {user?.lastName}</span>
+              <span className="text-gray-500 text-sm ">@{user?.firstName.toLocaleLowerCase()}_{user?.lastName.toLocaleLowerCase()}</span>
             </div>
           </div>
           {error && <span className="text-red-500 text-sm">{error.message}</span>}

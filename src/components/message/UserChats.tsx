@@ -24,7 +24,7 @@ const UserChats = () => {
     return (
         <div className="space-y-3 ">
             {chat.map((chatUsers) =>
-                <UserChatCard key={chatUsers.id} user={chatUsers.users[1]} message={null} onClick={()=>onMessaging(chatUsers.id)} />
+                <UserChatCard key={chatUsers.id} user={chatUsers.users[0]} message={null} onClick={()=>onMessaging(chatUsers.id)} />
             )}
         </div>
     );

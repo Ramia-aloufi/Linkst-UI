@@ -1,11 +1,10 @@
 import { Card, CardHeader, Avatar, IconButton, CardMedia, CardContent, Typography, CardActions, TextField, Button } from "@mui/material"
 import { red } from "@mui/material/colors"
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import type { Post } from "../model/Post";
 import CommentIcon from '@mui/icons-material/Comment';
-import  { useState} from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
@@ -19,11 +18,11 @@ const CommentSchema = z.object({
 });
 
 type input = z.infer<typeof CommentSchema>;
-const PostCard = ({post}:{post:Post}) => {
+const PostCard = ({ post }: { post: Post }) => {
 
-  const {comments} = useSelector((state: RootState) => state.comment);
-   const dispatch = useDispatch<AppDispatch>();
-  const { register, handleSubmit ,reset } = useForm<input>({
+  const { comments } = useSelector((state: RootState) => state.comment);
+  const dispatch = useDispatch<AppDispatch>();
+  const { register, handleSubmit, reset } = useForm<input>({
     resolver: zodResolver(CommentSchema)
   });
 
@@ -48,18 +47,19 @@ const PostCard = ({post}:{post:Post}) => {
     <Card>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
+          <Avatar >
+            {post.user.fullName.slice(0, 2)}
           </Avatar>
         }
         action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
+          <IconButton>
+            <ShareIcon />
           </IconButton>
+
         }
         title={post.user.fullName}
-        subheader={new Date(post.createdAt).toLocaleDateString()}        
-        />
+        subheader={new Date(post.createdAt).toLocaleDateString()}
+      />
       <CardContent>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {post.caption}
@@ -69,33 +69,33 @@ const PostCard = ({post}:{post:Post}) => {
         component="img"
         image={post.media}
         alt={post.caption}
-        sx={{ height: 300 }} // 16:9 aspect ratio
+        sx={{ height: 300 }}
       />
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites" onClick={handleLike}>
+        <IconButton onClick={handleLike}>
           {post.likedByCurrentUser ? (
             <FavoriteIcon color="error" />
           ) : (
             <FavoriteIcon />
           )}
+          {/* Display likes count */}
+          {post.likeCount > 0 && (
+            <Typography variant="body2" color="text.secondary" sx={{ marginLeft: 1 }}>
+              {post.likeCount} {post.likeCount === 1 ? 'like' : 'likes'}
+            </Typography>
+          )}
         </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <IconButton aria-label="comment" onClick={() => handleCommentOpen()}>
+
+        <IconButton onClick={() => handleCommentOpen()}>
           <CommentIcon />
+          {/* Display comments count */}
+          {post.commentCount > 0 && (
+            <Typography variant="body2" color="text.secondary" sx={{ marginLeft: 1 }}>
+              {post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}
+            </Typography>
+          )}
         </IconButton>
-        {/* Display likes and comments count */}
-        {post.likeCount > 0 && (
-          <Typography variant="body2" color="text.secondary" sx={{ marginLeft: 1 }}>
-            {post.likeCount} {post.likeCount === 1 ? 'like' : 'likes'}
-          </Typography>
-        )}
-        {post.commentCount > 0 && (
-          <Typography variant="body2" color="text.secondary" sx={{ marginLeft: 1 }}>
-            {post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}
-          </Typography>
-        )}
+
       </CardActions>
       {openComments && (
         <CardContent>
@@ -114,13 +114,13 @@ const PostCard = ({post}:{post:Post}) => {
                 ),
               }}
             >
-            <Button type="submit" variant="outlined" color="primary">
-              <SendIcon />
-            </Button>
+              <Button type="submit" variant="outlined" color="primary">
+                <SendIcon />
+              </Button>
             </TextField>
           </form>
           {/* Display comments */}
-        {comments.length === 0 && (
+          {comments.length === 0 && (
             <Typography variant="body2" color="text.secondary">
               No comments yet.
             </Typography>
@@ -136,10 +136,10 @@ const PostCard = ({post}:{post:Post}) => {
                     </Avatar>
                     <strong>{comment.user.fullName}:</strong>
                   </div>
-                <Typography variant="body2" sx={{ marginLeft: 3 }}>     
+                  <Typography variant="body2" sx={{ marginLeft: 3 }}>
 
-                   {comment.comment}
-                </Typography>
+                    {comment.comment}
+                  </Typography>
                 </div>
               ))}
             </div>

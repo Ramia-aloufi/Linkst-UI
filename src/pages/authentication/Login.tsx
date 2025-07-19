@@ -1,9 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button } from "@mui/material";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import z from "zod";
-import type { AppDispatch } from "../../redux/Store";
+import type { AppDispatch, RootState } from "../../redux/Store";
 import { LoginUser } from "../../redux/auth/AuthService";
 
 const LoginSchema = z.object({
@@ -18,6 +18,7 @@ type Inputs = z.infer<typeof LoginSchema>;
 
 const Login = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const {loading } = useSelector((state: RootState) => state.auth);
   const {
     register,
     handleSubmit,
@@ -57,7 +58,7 @@ const Login = () => {
       </div>
 
       <Button sx={{ padding: " .8rem 0rem" }} type="submit" variant="contained" color="primary" fullWidth>
-        Log In
+       {loading?"loading":"Log In"} 
       </Button>
     </form>
   );

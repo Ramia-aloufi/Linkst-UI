@@ -1,14 +1,13 @@
-import { Avatar } from '@mui/material'
+import { Avatar, Typography } from '@mui/material'
 
 const Stories = ({img,name}:{img:string,name:string}) => {
   return (
-    <div className='flex items-center justify-center flex-col cursor-pointer'>
+    <div className='flex items-center justify-center flex-col cursor-pointer space-y-2'>
         <Avatar
-            alt="Remy Sharp"
             src={img}
-            sx={{ width: 80, height: 80, margin: '0 10px' }}
+            sx={{ width: 70, height: 70 }}
         />
-        <span>{name}</span>
+      <Typography variant="body2" >{name}</Typography>
     </div>
   )
 }

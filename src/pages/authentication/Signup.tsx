@@ -4,9 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
-import type { AppDispatch } from "../../redux/Store";
-import { useDispatch } from "react-redux";
+import type { AppDispatch, RootState } from "../../redux/Store";
+import { useDispatch, useSelector } from "react-redux";
 import { SignupUser } from "../../redux/auth/AuthService";
+import { useNavigate } from "react-router-dom";
 
 const SignupSchema = z.object({
     firstName: z
@@ -28,8 +29,9 @@ const SignupSchema = z.object({
 type Inputs = z.infer<typeof SignupSchema>;
 
 const Signup = () => {
-    // const authSelectors = (state:RootState) => state.auth;
+    const { token, loading } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>()
+    const navigate = useNavigate()
     const {
         register,
         handleSubmit,
@@ -40,8 +42,9 @@ const Signup = () => {
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
         dispatch(SignupUser(data));
-        
-        console.log(data);
+        if (token) {
+            navigate("/")
+        }
     };
 
     return (
@@ -108,7 +111,7 @@ const Signup = () => {
                 </RadioGroup>
             </div>
             <Button sx={{ padding: " .8rem 0rem" }} type="submit" variant="contained" color="primary" fullWidth>
-                Sign Up
+                {!loading ? "T" : "F"}
             </Button>
         </form>
     );

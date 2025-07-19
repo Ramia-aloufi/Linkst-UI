@@ -19,14 +19,19 @@ const initialState: AuthTypes = {
 const AuthSlice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {},
+    reducers: {
+        logOut:(state)=>{
+            state.token = null
+            localStorage.removeItem("token")
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(LoginUser.fulfilled, (state, action) => {
-                state.token = action.payload;
+                state.token = action.payload.token;
             })
             .addCase(SignupUser.fulfilled, (state, action) => {
-                state.token = action.payload;
+                state.token = action.payload.token;
             })
             .addMatcher(
                 (action) => action.type.endsWith('/pending'),
@@ -51,5 +56,6 @@ const AuthSlice = createSlice({
             );
     }
 });
+export const{logOut}= AuthSlice.actions
 
 export const AuthReducer = AuthSlice.reducer;

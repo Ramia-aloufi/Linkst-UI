@@ -29,6 +29,12 @@ const MessageSlice = createSlice({
     reducers: {
         selectChat:(state,action:PayloadAction<UUID>)=>{
             state.selectedChatID = action.payload
+        },
+        addNewMessage:(state,action:PayloadAction<Message>)=>{            
+     const exists = state.messages.some(m => m === action.payload);
+  if (!exists) {
+    state.messages.push(action.payload);
+  }
         }
     },
     extraReducers: (builder) => {
@@ -70,4 +76,4 @@ const MessageSlice = createSlice({
 
 
 export const MessageReducer = MessageSlice.reducer
-export const {selectChat} = MessageSlice.actions
+export const {selectChat,addNewMessage} = MessageSlice.actions
