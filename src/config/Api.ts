@@ -32,9 +32,9 @@ api.interceptors.response.use(
     if (status === 401) {
       localStorage.removeItem('token');
       // toast.error('Session expired. Please log in again.');
-      window.location.href = '/login';
+      // window.location.href = '/login';
     } else if (status === 403) {
-       window.location.href = '/login';
+      //  window.location.href = '/login';
        localStorage.removeItem('token');
       // toast.error('You are not authorized to perform this action.');
     } else if (status === 500) {

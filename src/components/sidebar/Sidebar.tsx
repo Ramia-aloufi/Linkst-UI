@@ -1,16 +1,17 @@
-import { Avatar, Card, Divider } from "@mui/material"
+import { Avatar, Box, Card, Divider, ListItemIcon, ListItemText, MenuItem, MenuList, Typography } from "@mui/material"
 import { SidebarMenu } from "./SidebarMenu"
 import LogoutIcon from '@mui/icons-material/Logout';
 import { type AppDispatch, type RootState } from "../../redux/Store";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import logo from "../../assets/linkst1.svg"
+import { useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/Linkst11.png"
 import { logOut } from "../../redux/auth/AuthSlice";
 const Sidebar = () => {
 
   const { userProfile } = useSelector((state: RootState) => state.profile);
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
+  const location = useLocation();
 
   const onLogOut = ()=>{
     dispatch(logOut())
@@ -19,18 +20,28 @@ const Sidebar = () => {
   return (
     <Card className="card h-screen flex flex-col justify-between ">
       <div className="space-y-4 pl-5">
-        <div className="py-5 flex space-x-2">
+        <Box className="py-5 flex space-x-2">
           <img src={logo} alt="Logo" width="30" height="30"/>
-          <span className="font-bold text-2xl">Linkst</span>
-        </div>
-        <div className="space-y-4">
-          {SidebarMenu.map((item) => (
-            <div  onClick={() => {navigate(item.path)}} key={item.name} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-              <item.icon />
-              <span>{item.name}</span>
-            </div>
-          ))}
-        </div>
+          <Typography variant="h6">Linkst</Typography>
+        </Box>
+        <MenuList >
+          {SidebarMenu.map((item) => {
+               const isActive = location.pathname === item.path;
+              const Icon = isActive ? item.activeIcon : item.icon;
+              console.log("Active Path:", isActive);
+              
+          
+          return(
+            <MenuItem selected={isActive} onClick={() => {navigate(item.path)}} key={item.name} >
+              <ListItemIcon>
+                <Icon />
+              </ListItemIcon>
+              <ListItemText>
+              <Typography variant="body2">{item.name}</Typography>
+              </ListItemText>
+            </MenuItem>
+          )})}
+        </MenuList>
       </div>
       <div className="">
         <Divider />

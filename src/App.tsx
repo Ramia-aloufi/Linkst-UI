@@ -1,5 +1,4 @@
 
-import { ThemeProvider } from '@mui/material';
 import './App.css'
 import Home from './components/Home';
 import Message from './components/message/Message';
@@ -9,14 +8,15 @@ import ReelsForm from './components/ReelsForm';
 import Authentication from './pages/authentication/authentication'
 import HomeLayout from './pages/home/HomeLayout';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { DarkTheme } from './theme/DarkTheme';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { GetUserProfile } from './redux/profile/ProfileService';
 import type { AppDispatch } from './redux/Store';
 import { getPosts } from './redux/post/PostService';
+import { Community } from './pages/Community';
 
 
+import { ThemeProvider } from './context/ThemeContext';
 
 
 function App() {
@@ -33,12 +33,13 @@ function App() {
   },[dispatch])
 
   return (
-        <ThemeProvider theme={DarkTheme}>
+        <ThemeProvider>
       <Router>
         <Routes>
           <Route path="/" element={<HomeLayout />}>
             <Route index element={<Home />} />
             <Route path="reels" element={<Reels />} />
+            <Route path="community" element={<Community />} />
             <Route path="new-reels" element={<ReelsForm />} />
             <Route path="profile/:id" element={<Profile />} />
           </Route>

@@ -90,3 +90,19 @@ export const unlikePost = createAsyncThunk(
         }
     }
 );
+export const getPostByUserId = createAsyncThunk<Post[],void, { rejectValue: ApiError }>(
+    'post/getPostByUserId',
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get<Post[]>(`post/user`);
+            return data;
+        } catch (err) {
+            const error = err as AxiosError<ApiError>;
+            const apiError = error.response?.data ?? {
+                message: 'Unexpected error',
+                error: 'Unknown error',
+            };
+            return rejectWithValue(apiError);
+        }
+    }
+);

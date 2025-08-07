@@ -1,10 +1,11 @@
 import { Avatar, Box, Button, Card, Tab, Tabs } from "@mui/material"
 import { useEffect, useState, type SyntheticEvent } from "react";
-import PostCard from "../PostCard";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { GetUserProfile } from "../../redux/profile/ProfileService";
 import { ProfileModal } from "./ProfileModal";
+import { getPostByUserId } from "../../redux/post/PostService";
+import ProfilePosts from "./ProfilePosts";
 
 const Profile = () => {
   // const { id } = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ const Profile = () => {
     { value: "saved", label: "Saved" },
     { value: "repost", label: "Repost" },
   ]
+  const {userPosts} = useSelector((state: RootState) => state.post);
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
 
@@ -23,6 +25,7 @@ const Profile = () => {
   const { userProfile } = useSelector((state:RootState) => state.profile);
   useEffect(() => {
     dispatch(GetUserProfile());
+    dispatch(getPostByUserId());
   }, [dispatch]);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
@@ -70,8 +73,10 @@ const Profile = () => {
             </Tabs>
           </Box>
           <div className="">
-            {value=="post" && <div>
-              {Array(3).map(()=>(<PostCard img={""} text={""}/>))}
+            {value=="post" && <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 p-5">
+              {userPosts.map((post) => (
+                <ProfilePosts key={post.id} post={post} />
+              ))}
               </div>}
           </div>
         </section>

@@ -43,7 +43,6 @@ const Home = () => {
                     }, 3000)
                 }
             });
-
             if (node) observer.current.observe(node);
         },
         [ hasNext, dispatch, page]

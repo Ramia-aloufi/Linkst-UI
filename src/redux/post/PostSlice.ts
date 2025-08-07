@@ -1,10 +1,12 @@
 import { createSlice, isRejectedWithValue } from "@reduxjs/toolkit";
 import type { Post } from "../../model/Post";
-import { createPost, getPosts, likePost } from "./PostService";
+import { createPost, getPostByUserId, getPosts, likePost } from "./PostService";
 import type { ApiError } from "../../model/ApiError";
 
 type PostInitialState = {
     posts: Post[];
+    userPosts: Post[];
+    userSavedPosts: Post[];
     currentPage: number,
     totalPages: number,
     totalItems: number,
@@ -17,6 +19,8 @@ type PostInitialState = {
 
 const initialState: PostInitialState = {
     posts: [],
+    userPosts: [],
+    userSavedPosts: [],
     currentPage: 0,
     totalPages: 0,
     totalItems: 0,
@@ -50,6 +54,13 @@ const PostSelector = createSlice({
                     state.posts[index].likedByCurrentUser = action.payload.likedByCurrentUser;
                     state.posts[index].likeCount = action.payload.likeCount;
                 }
+            })
+            .addCase(getPostByUserId.fulfilled, (state, action) => {
+                state.userPosts = action.payload;
+                // state.currentPage = action.payload.currentPage;
+                // state.hasNext = action.payload.hasNext;
+                // state.hasPrevious = action.payload.hasPrevious;
+                // state.page = action.payload.currentPage + 1;
             })
 
             .addMatcher(

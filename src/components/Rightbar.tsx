@@ -1,7 +1,11 @@
 
+import { ThemeToggleButton } from './ThemeToggleButton';
 const Rightbar = () => {
+
   return (
-    <div className="bg-gray-700">Rightbar</div>
+    <div className="bg-gray-700">
+      <ThemeToggleButton />
+    </div>
   )
 }
 
