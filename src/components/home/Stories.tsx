@@ -1,11 +1,12 @@
-import { Avatar, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 
 const Stories = ({img,name}:{img:string,name:string}) => {
   return (
     <div className='flex items-center justify-center flex-col cursor-pointer space-y-2'>
-        <Avatar
+        <Box
+            component="img"
             src={img}
-            sx={{ width: 70, height: 70 }}
+            sx={{ width: 100, height: 100 }}
         />
       <Typography variant="body2" >{name}</Typography>
     </div>

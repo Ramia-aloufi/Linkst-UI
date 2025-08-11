@@ -17,8 +17,8 @@ const LoginSchema = z.object({
 type Inputs = z.infer<typeof LoginSchema>;
 
 const Login = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const {loading } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading } = useSelector((state: RootState) => state.auth);
   const {
     register,
     handleSubmit,
@@ -32,33 +32,27 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <div>
-        <TextField
-          label="Email"
-          type="email"
-          fullWidth
-          autoComplete="off"
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          {...register("email")}
-        />
-      </div>
-
-      <div>
-        <TextField
-          label="Password"
-          type="password"
-          fullWidth
-          autoComplete="off"
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          {...register("password")}
-        />
-      </div>
-
-      <Button sx={{ padding: " .8rem 0rem" }} type="submit" variant="contained" color="primary" fullWidth>
-       {loading?"loading":"Log In"} 
+    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 justify-center">
+      <TextField
+        label="Email"
+        type="email"
+        sx={{ width: 350 }}
+        autoComplete="off"
+        error={!!errors.email}
+        helperText={errors.email?.message}
+        {...register("email")}
+      />
+      <TextField
+        label="Password"
+        type="password"
+        sx={{ width: 350 }}
+        autoComplete="off"
+        error={!!errors.password}
+        helperText={errors.password?.message}
+        {...register("password")}
+      />
+      <Button sx={{ width: 350, padding: "12px 16px" }} type="submit" variant="contained" color="primary">
+        {loading ? "loading" : "Log In"}
       </Button>
     </form>
   );

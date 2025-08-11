@@ -9,9 +9,9 @@ const UserChats = () => {
     //   const {userProfile} =  useSelector((state: RootState) => state.profile);
     const dispatch = useDispatch<AppDispatch>()
 
-    const onMessaging = (chatId:UUID)=>{
+    const onMessaging = (chatId: UUID) => {
         dispatch(selectChat(chatId))
-       dispatch(getallMessages(chatId))
+        dispatch(getallMessages(chatId))
     }
 
     if (!chat || chat.length === 0) {
@@ -24,7 +24,7 @@ const UserChats = () => {
     return (
         <div className="space-y-3 ">
             {chat.map((chatUsers) =>
-                <UserChatCard key={chatUsers.id} user={chatUsers.users[0]} message={null} onClick={()=>onMessaging(chatUsers.id)} />
+                <UserChatCard key={chatUsers.id} user={chatUsers.users[0]} message={null} onClick={() => onMessaging(chatUsers.id)} />
             )}
         </div>
     );

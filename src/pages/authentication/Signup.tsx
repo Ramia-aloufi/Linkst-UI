@@ -41,6 +41,7 @@ const Signup = () => {
     });
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
+        console.log("Signup Data:", data);
         dispatch(SignupUser(data));
         if (token) {
             navigate("/")
@@ -48,69 +49,56 @@ const Signup = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 w-full">
-            <div>
-                <TextField
-                    label="First Name"
-                    type="text"
-                    fullWidth
-                    autoComplete="off"
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                    {...register("firstName")}
-                />
-            </div>
-            <div>
-                <TextField
-                    label="Last Name"
-                    type="text"
-                    fullWidth
-                    autoComplete="off"
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                    {...register("lastName")}
-                />
-            </div>
-            <div>
-                <TextField
-                    label="Email"
-                    type="email"
-                    fullWidth
-                    autoComplete="off"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    {...register("email")}
-                />
-            </div>
-            <div>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 justify-center">
+            <TextField
+                label="First Name"
+                type="text"
+                sx={{ width: 350 }}
 
-                <TextField
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    autoComplete="off"
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
-                    {...register("password")}
-                />
-            </div>
-            <div>
-                <RadioGroup row >
-                    <FormControlLabel
-                        value="female"
-                        control={<Radio />}
-                        label="Female"
-                        {...register("gender")}
-                    />
-                    <FormControlLabel
-                        value="male"
-                        control={<Radio />}
-                        label="Male"
-                        {...register("gender")}
-                    />
-                </RadioGroup>
-            </div>
-            <Button sx={{ padding: " .8rem 0rem" }} type="submit" variant="contained" color="primary" fullWidth>
+                autoComplete="off"
+                error={!!errors.firstName}
+                helperText={errors.firstName?.message}
+                {...register("firstName")}
+            />
+            <TextField
+                label="Last Name"
+                type="text"
+                sx={{ width: 350 }}
+
+                autoComplete="off"
+                error={!!errors.lastName}
+                helperText={errors.lastName?.message}
+                {...register("lastName")}
+            />
+            <TextField
+                label="Email"
+                type="email"
+                sx={{ width: 350 }}
+
+                autoComplete="off"
+                error={!!errors.email}
+                helperText={errors.email?.message}
+                {...register("email")}
+            />
+            <TextField
+                label="Password"
+                type="password"
+                sx={{ width: 350 }}
+
+                autoComplete="off"
+                error={!!errors.password}
+                helperText={errors.password?.message}
+                {...register("password")}
+            />
+            <RadioGroup row   {...register("gender")}
+                sx={{
+                    '& .MuiFormControlLabel-label': { fontSize: '0.85rem' }, // smaller text
+                    '& .MuiFormControlLabel-root': { marginRight: 1 } // reduce spacing
+                }} >
+                <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
+                <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
+            </RadioGroup>
+            <Button sx={{ padding: " .8rem 0rem", width: "350px" }} type="submit" variant="contained" color="primary" fullWidth>
                 {!loading ? "T" : "F"}
             </Button>
         </form>

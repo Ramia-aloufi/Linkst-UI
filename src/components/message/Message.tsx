@@ -1,7 +1,4 @@
-import { Avatar, Grid, IconButton, Input } from "@mui/material"
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import CallIcon from '@mui/icons-material/Call';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
+import { Avatar, Box, Card, Grid, TextField, Typography } from "@mui/material"
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import SearchUser from "./SearchUser";
 import ChatMessage from "./ChatMessage";
@@ -17,7 +14,7 @@ const Message = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { messages, selectedChatID } = useSelector((state: RootState) => state.message)
     const [msg, setMsg] = useState<{ content: string, img: File | null }>({ content: "", img: null })
-    const sendMsg = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const sendMsg = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key == "Enter") {
             const data = new FormData
             if (msg.content.length > 0)
@@ -26,7 +23,7 @@ const Message = () => {
                 data.append("image", msg.img)
             }
             if (selectedChatID)
-                dispatch(createMessage({ chatID: selectedChatID, msg: data  }))
+                dispatch(createMessage({ chatID: selectedChatID, msg: data }))
             setMsg({ content: "", img: null })
 
         }
@@ -50,70 +47,60 @@ const Message = () => {
         return () => {
             disconnectWebSocket();
         };
-    }, [selectedChatID,dispatch]);
+    }, [selectedChatID, dispatch]);
     const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if(bottomRef.current)
-        bottomRef.current.scrollTop = bottomRef.current?.scrollHeight
+        if (bottomRef.current)
+            bottomRef.current.scrollTop = bottomRef.current?.scrollHeight
     }, [messages]);
 
 
     return (
-        <Grid container className={"h-screen overflow-y-hidden"}>
-            <Grid size={3}>
-                <div className="flex h-full justify-between space-x-2">
-                    <div className="w-full">
-                        <div className="flex item-center space-x-4 py-5">
-                            <KeyboardArrowLeftIcon />
-                            <h1 className="text-xl font-bold">Home</h1>
-                        </div>
-                        <div className="h-[83vh] px-5">
-                            <div className="">
+            <Grid container spacing={4} className={"h-[85vh] overflow-y-hidden"}>
+                {/* {Left Sidebar} */}
+                <Grid size={3}>
+                    <Card variant="outlined" className="flex p-2 justify-between space-x-2">
+                        <div className="w-full">
+                            <Typography className="py-2 pl-5" variant="h6">Messages</Typography>
+                            <Box className="h-[85vh] px-5">
                                 <SearchUser />
-
-                            </div>
-                            <div className="h-full  overflow-y-scroll hideScrollBar ">
                                 <UserChats />
+                            </Box>
+                        </div>
+                    </Card>
+                </Grid>
+                {/* {Right Sidebar} */}
+                <Grid size={9} >
+                    <div className="flex flex-col h-full space-y-3">
+                        <Card variant="outlined" className=" flex justify-between items-center border-l p-5 ">
+                            <div className="flex items-center space-x-3">
+                                <Avatar />
+                                <span>Code c</span>
+                            </div>
+                            <div className="">
+                                <Typography color="primary" variant="body2">Show Profile</Typography>
+                            </div>
+                        </Card>
+                        <Card variant="outlined">
+                        <div  ref={bottomRef} className=" h-[60vh] hideScrollBar overflow-y-auto  px-5 space-y-5 py-4 ">
+                            {messages.map((msg, index) => (
+                                <ChatMessage key={index} message={msg} />
+                            ))}
+                        </div>
+                        <div className=" flex-1 border-l p-4 flex justify-center items-center space-x-5 py-5 ">
+                            {msg.img && <img src={URL.createObjectURL(msg.img)} className=" absolute w-[100px] h-[200px] rounded-md right-8 bottom-20 " />}
+                            <TextField variant="standard" placeholder="Type a message..." fullWidth value={msg.content} onChange={(e) => setMsg(prev => ({ ...prev, content: e.target.value }))} onKeyUp={sendMsg} />
+                            <div className="">
+                                <input type="file" accept="image/*" className="hidden" id="upload_img" onChange={uploadImg} />
+                                <label htmlFor="upload_img"><AddPhotoAlternateIcon /></label>
                             </div>
                         </div>
+                        </Card>
                     </div>
-                </div>
-            </Grid>
-            <Grid size={9} >
-                <div className="flex flex-col min-h-screen space-y-3">
-                    <div className="flex-1 flex justify-between items-center border-l p-5 ">
-                        <div className="flex items-center space-x-3">
-                            <Avatar />
-                            <span>Code c</span>
-                        </div>
-                        <div className="">
-                            <IconButton>
-                                <CallIcon />
-                            </IconButton>
-                            <IconButton>
-                                <VideoCallIcon />
-                            </IconButton>
-                        </div>
-                    </div>
-                    <div ref={bottomRef} className="h-[75vh] hideScrollBar overflow-y-auto  px-2 space-y-5 py-4 ">
-                        {messages.map((msg, index) => (
-                            <ChatMessage key={index} message={msg} />
-                        ))}
-                    </div>
-                    <div className=" flex-1 border-l p-4 flex justify-center items-center space-x-5 py-5 ">
-                        {msg.img && <img src={URL.createObjectURL(msg.img)} className=" absolute w-[100px] h-[200px] rounded-md left-2 bottom-20 " />}
-                        <Input fullWidth value={msg.content} onChange={(e) => setMsg(prev => ({ ...prev, content: e.target.value }))} onKeyDown={sendMsg} />
-                        <div className="">
-                            <input type="file" accept="image/*" className="hidden" id="upload_img" onChange={uploadImg} />
-                            <label htmlFor="upload_img"><AddPhotoAlternateIcon /></label>
-                        </div>
-                    </div>
-                </div>
 
+                </Grid>
             </Grid>
-        </Grid>
-
     )
 }
 

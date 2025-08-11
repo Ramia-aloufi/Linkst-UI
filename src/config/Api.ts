@@ -28,14 +28,23 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiError>) => {
     const status = error.response?.status;
+    const isLoginPage = window.location.pathname === '/login';
 
     if (status === 401) {
       localStorage.removeItem('token');
+            if (!isLoginPage) {
+        window.location.href = '/login';
+      }
+            return Promise.reject(error);
       // toast.error('Session expired. Please log in again.');
       // window.location.href = '/login';
     } else if (status === 403) {
-      //  window.location.href = '/login';
        localStorage.removeItem('token');
+      if (!isLoginPage) {
+        window.location.href = '/login';
+      }
+      return Promise.reject(error);
+
       // toast.error('You are not authorized to perform this action.');
     } else if (status === 500) {
       // toast.error('Server error. Please try again later.');

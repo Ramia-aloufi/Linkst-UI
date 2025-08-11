@@ -2,7 +2,7 @@ import { Card, CardHeader, Avatar, IconButton, CardMedia, CardContent, Typograph
 import { red } from "@mui/material/colors"
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
-import type { Post } from "../model/Post";
+import type { Post } from "../../model/Post";
 import CommentIcon from '@mui/icons-material/Comment';
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,9 +10,9 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 import SendIcon from '@mui/icons-material/Send';
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../redux/Store";
-import { createComments, getComments } from "../redux/comment/CommentService";
-import { likePost } from "../redux/post/PostService";
+import type { AppDispatch, RootState } from "../../redux/Store";
+import { createComments, getComments } from "../../redux/comment/CommentService";
+import { likePost } from "../../redux/post/PostService";
 const CommentSchema = z.object({
   content: z.string().min(2).max(200),
 });

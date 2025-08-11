@@ -5,6 +5,7 @@ import { PostReducer } from "./post/PostSlice";
 import { CommentReducer } from "./comment/CommentSlice";
 import { MessageReducer } from "./message/MessageSlice";
 import { UserReducer } from "./user/UserSlice";
+import { ReelsReducer } from "./reels/ReelsSlice";
 
 const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ const store = configureStore({
     post: PostReducer,
     comment: CommentReducer,
     message:MessageReducer,
-    user:UserReducer
+    user:UserReducer,
+    reels: ReelsReducer, 
   },
 });
 export type RootState = ReturnType<typeof store.getState>;

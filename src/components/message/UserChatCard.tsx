@@ -12,6 +12,7 @@ const UserChatCard = ({ user, message, onClick }: Props) => {
   return (
     <Card
       onClick={onClick}
+      variant="outlined"
     >
       <CardHeader
         avatar={<Avatar>{user.firstName[0]}</Avatar>}

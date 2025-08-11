@@ -1,70 +1,193 @@
-import { Avatar, Box, Card, Divider, ListItemIcon, ListItemText, MenuItem, MenuList, Typography } from "@mui/material"
-import { SidebarMenu } from "./SidebarMenu"
-import LogoutIcon from '@mui/icons-material/Logout';
-import { type AppDispatch, type RootState } from "../../redux/Store";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import {
+  Avatar,
+  Box,
+  Card,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  MenuList,
+  Typography,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { SidebarMenu } from "./SidebarMenu";
+import {  type RootState } from "../../redux/Store";
+import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from "../../assets/Linkst11.png"
-import { logOut } from "../../redux/auth/AuthSlice";
-const Sidebar = () => {
+import logo from "../../assets/Linkst11.png";
+import { ThemeToggleButton } from "./ThemeToggleButton";
 
+const Navbar = () => {
   const { userProfile } = useSelector((state: RootState) => state.profile);
-  const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const location = useLocation();
 
-  const onLogOut = ()=>{
-    dispatch(logOut())
-    navigate("/login")
-  }
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+
   return (
-    <Card className="card h-screen flex flex-col justify-between ">
-      <div className="space-y-4 pl-5">
-        <Box className="py-5 flex space-x-2">
-          <img src={logo} alt="Logo" width="30" height="30"/>
-          <Typography variant="h6">Linkst</Typography>
-        </Box>
-        <MenuList >
-          {SidebarMenu.map((item) => {
-               const isActive = location.pathname === item.path;
-              const Icon = isActive ? item.activeIcon : item.icon;
-              console.log("Active Path:", isActive);
-              
-          
-          return(
-            <MenuItem selected={isActive} onClick={() => {navigate(item.path)}} key={item.name} >
-              <ListItemIcon>
+    <Card
+      className="flex items-center justify-between px-4"
+      sx={{
+        height: 64,
+        borderRadius: 0,
+        boxShadow: 1,
+      }}
+    >
+      {/* Left: Logo + text always visible */}
+      <Box
+        className="flex items-center space-x-2 cursor-pointer"
+        onClick={() => navigate("/")}
+      >
+        <img src={logo} alt="Logo" width="30" height="30" />
+        <Typography variant="h6" noWrap>
+          Linkst
+        </Typography>
+      </Box>
+
+      {/* Desktop Menu: visible md+ */}
+      <MenuList
+        className="hidden md:flex flex-row p-0"
+        sx={{ display: { xs: "none", md: "flex" } }}
+      >
+        {SidebarMenu.map((item) => {
+          const isActive = location.pathname === item.path;
+          const Icon = isActive ? item.activeIcon : item.icon;
+
+          return (
+            <MenuItem
+             className="flex flex-col items-center justify-center"
+              key={item.name}
+              selected={isActive}
+              onClick={() => navigate(item.path)}
+              sx={{
+                borderRadius: 1,
+                minWidth: "auto",
+                px: 3,
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 32 }}>
                 <Icon />
               </ListItemIcon>
-              <ListItemText>
-              <Typography variant="body2">{item.name}</Typography>
-              </ListItemText>
+              <ListItemText
+                primary={<Typography variant="body2">{item.name}</Typography>}
+              />
             </MenuItem>
-          )})}
-        </MenuList>
-      </div>
-      <div className="">
-        <Divider />
-        <div className="space-y-2">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center space-x-2">
-              <Avatar sx={{ width: 40, height: 40 }} >
-                {userProfile?.firstName.slice(0,2)}
-                </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold">{userProfile?.firstName} {userProfile?.lastName}</span>
-                <span className="text-xs text-gray-500">@{userProfile?.firstName.toLocaleLowerCase()}_{userProfile?.lastName.toLocaleLowerCase()}</span>
-              </div>
-            </div>
+          );
+        })}
+      </MenuList>
+      
+            {/* Desktop right side: Profile and ThemeToggle - visible md+ */}
+      <Box
+        className="hidden md:flex items-center space-x-3"
+        sx={{ display: { xs: "none", md: "flex" } }}
+      >
+        <Box
+          className="flex items-center space-x-2 cursor-pointer"
+          onClick={() => navigate("/profile")}
+        >
+          <Avatar sx={{ width: 40, height: 40 }}>
+            {userProfile?.firstName?.slice(0, 2)}
+          </Avatar>
+          <Box className="hidden sm:flex flex-col">
+            <span className="text-sm font-semibold">
+              {userProfile?.firstName} {userProfile?.lastName}
+            </span>
+            <span className="text-xs text-gray-500">
+              @{userProfile?.firstName?.toLowerCase()}_
+              {userProfile?.lastName?.toLowerCase()}
+            </span>
+          </Box>
+        </Box>
+        <Divider orientation="vertical" flexItem />
+        <ThemeToggleButton />
+      </Box>
+      
+      {/* Mobile Hamburger Menu: visible xs to sm */}
+      <Box sx={{ display: { xs: "flex", md: "none" } }}>
+        <IconButton onClick={handleOpenNavMenu} size="large" color="inherit">
+          <MenuIcon />
+        </IconButton>
+
+        <Menu
+          anchorEl={anchorElNav}
+          open={Boolean(anchorElNav)}
+          onClose={handleCloseNavMenu}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+          keepMounted
+        >
+          {/* Sidebar items */}
+          {SidebarMenu.map((item) => {
+            const isActive = location.pathname === item.path;
+            const Icon = item.icon;
+
+            return (
+              <MenuItem
+             
+                key={item.name}
+                selected={isActive}
+                onClick={() => {
+                  navigate(item.path);
+                  handleCloseNavMenu();
+                }}
+              >
+                <ListItemIcon>
+                  <Icon />
+                </ListItemIcon>
+                <ListItemText>{item.name}</ListItemText>
+              </MenuItem>
+            );
             
-            <LogoutIcon sx={{ width: 20, height: 20 }} onClick={onLogOut} />
-          </div>
-        </div>
-      </div>
+          })}
+          {/* Theme toggle button */}
+          <Divider />
+          <ThemeToggleButton />
+          <Divider />
+
+          {/* Theme toggle inside menu */}
+          <MenuItem
+            onClick={() => {
+              // close menu after toggling, or not depending on your toggle design
+              handleCloseNavMenu();
+            }}
+          >
+                    <Box
+          className="flex items-center space-x-2 cursor-pointer"
+          onClick={() => navigate("/profile")}
+        >
+          <Avatar sx={{ width: 40, height: 40 }}>
+            {userProfile?.firstName?.slice(0, 2)}
+          </Avatar>
+          <Box className="flex flex-col">
+            <span className="text-sm font-semibold">
+              {userProfile?.firstName} {userProfile?.lastName}
+            </span>
+            <span className="text-xs text-gray-500">
+              @{userProfile?.firstName?.toLowerCase()}_
+              {userProfile?.lastName?.toLowerCase()}
+            </span>
+          </Box>
+
+        </Box>
+          
+          </MenuItem>
+        </Menu>
+      </Box>
+
+
     </Card>
-  )
-}
+  );
+};
 
-export default Sidebar
-
-
+export default Navbar;
