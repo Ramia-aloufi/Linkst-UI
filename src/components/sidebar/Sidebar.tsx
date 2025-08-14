@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { SidebarMenu } from "./SidebarMenu";
-import {  type RootState } from "../../redux/Store";
+import { type RootState } from "../../redux/Store";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Linkst11.png";
@@ -24,7 +24,7 @@ const Navbar = () => {
   const { userProfile } = useSelector((state: RootState) => state.profile);
   const navigate = useNavigate();
   const location = useLocation();
-
+const img = userProfile?.profilePictureUrl || "https://www.w3schools.com/howto/img_avatar.png";
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -66,7 +66,7 @@ const Navbar = () => {
 
           return (
             <MenuItem
-             className="flex flex-col items-center justify-center"
+              className="flex  items-center justify-center"
               key={item.name}
               selected={isActive}
               onClick={() => navigate(item.path)}
@@ -86,8 +86,8 @@ const Navbar = () => {
           );
         })}
       </MenuList>
-      
-            {/* Desktop right side: Profile and ThemeToggle - visible md+ */}
+
+      {/* Desktop right side: Profile and ThemeToggle - visible md+ */}
       <Box
         className="hidden md:flex items-center space-x-3"
         sx={{ display: { xs: "none", md: "flex" } }}
@@ -97,22 +97,22 @@ const Navbar = () => {
           onClick={() => navigate("/profile")}
         >
           <Avatar sx={{ width: 40, height: 40 }}>
-            {userProfile?.firstName?.slice(0, 2)}
+            <img src={img} alt="Profile" />
           </Avatar>
           <Box className="hidden sm:flex flex-col">
             <span className="text-sm font-semibold">
-              {userProfile?.firstName} {userProfile?.lastName}
+              {userProfile?.user.firstName} {userProfile?.user.lastName}
             </span>
             <span className="text-xs text-gray-500">
-              @{userProfile?.firstName?.toLowerCase()}_
-              {userProfile?.lastName?.toLowerCase()}
+              @{userProfile?.user.firstName?.toLowerCase()}_
+              {userProfile?.user.lastName?.toLowerCase()}
             </span>
           </Box>
         </Box>
         <Divider orientation="vertical" flexItem />
         <ThemeToggleButton />
       </Box>
-      
+
       {/* Mobile Hamburger Menu: visible xs to sm */}
       <Box sx={{ display: { xs: "flex", md: "none" } }}>
         <IconButton onClick={handleOpenNavMenu} size="large" color="inherit">
@@ -134,7 +134,7 @@ const Navbar = () => {
 
             return (
               <MenuItem
-             
+
                 key={item.name}
                 selected={isActive}
                 onClick={() => {
@@ -148,13 +148,12 @@ const Navbar = () => {
                 <ListItemText>{item.name}</ListItemText>
               </MenuItem>
             );
-            
+
           })}
           {/* Theme toggle button */}
           <Divider />
           <ThemeToggleButton />
           <Divider />
-
           {/* Theme toggle inside menu */}
           <MenuItem
             onClick={() => {
@@ -162,30 +161,26 @@ const Navbar = () => {
               handleCloseNavMenu();
             }}
           >
-                    <Box
-          className="flex items-center space-x-2 cursor-pointer"
-          onClick={() => navigate("/profile")}
-        >
-          <Avatar sx={{ width: 40, height: 40 }}>
-            {userProfile?.firstName?.slice(0, 2)}
-          </Avatar>
-          <Box className="flex flex-col">
-            <span className="text-sm font-semibold">
-              {userProfile?.firstName} {userProfile?.lastName}
-            </span>
-            <span className="text-xs text-gray-500">
-              @{userProfile?.firstName?.toLowerCase()}_
-              {userProfile?.lastName?.toLowerCase()}
-            </span>
-          </Box>
-
-        </Box>
-          
+            <Box
+              className="flex items-center space-x-2 cursor-pointer"
+              onClick={() => navigate("/profile")}
+            >
+              <Avatar sx={{ width: 40, height: 40 }}>
+                <img src={img} alt="Profile" />
+              </Avatar>
+              <Box className="flex flex-col">
+                <span className="text-sm font-semibold">
+                  {userProfile?.user.firstName} {userProfile?.user.lastName}
+                </span>
+                <span className="text-xs text-gray-500">
+                  @{userProfile?.user.firstName?.toLowerCase()}_
+                  {userProfile?.user.lastName?.toLowerCase()}
+                </span>
+              </Box>
+            </Box>
           </MenuItem>
         </Menu>
       </Box>
-
-
     </Card>
   );
 };

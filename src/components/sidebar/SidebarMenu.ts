@@ -1,9 +1,7 @@
 import HomeIcon from '@mui/icons-material/Home';
 import ReelsIcon from '@mui/icons-material/VideoLibrary';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import PeopleIcon from '@mui/icons-material/People';
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
-import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import TextsmsIcon from '@mui/icons-material/Textsms';
 
@@ -22,12 +20,12 @@ export const SidebarMenu: SidebarMenuItem[] = [
         activeIcon: HomeIcon,
     },
 
-        {
-        name: 'Community',
-        path: '/community',
-        icon: PeopleOutlinedIcon, 
-        activeIcon: PeopleIcon,
-    },
+    //     {
+    //     name: 'Community',
+    //     path: '/community',
+    //     icon: PeopleOutlinedIcon, 
+    //     activeIcon: PeopleIcon,
+    // },
     {
         name: 'Reels',
         path: '/reels',

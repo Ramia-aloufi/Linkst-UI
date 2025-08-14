@@ -2,16 +2,13 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Avatar, Button, CircularProgress, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import ImageIcon from '@mui/icons-material/Image';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
-import DescriptionIcon from '@mui/icons-material/Description';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { AppDispatch, RootState } from '../../redux/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost } from '../../redux/post/PostService';
 import type { User } from '../../model/User';
-
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 
 const style = {
@@ -31,115 +28,120 @@ const style = {
 type CreatePostModalProps = {
   open: boolean;
   onClose: () => void;
-  user:User | null
+  user: User | undefined
 };
 
 
 
 const PostSchema = z.object({
   postContent: z.string().min(1, 'Post content is required'),
-  postImage: z.instanceof(FileList).optional(),
-  postVideo: z.instanceof(FileList).optional(),
-  postFile: z.instanceof(FileList).optional(),
+  postCaption: z.string().min(1, 'Post caption is required'),
+  media: z.instanceof(FileList).optional(),
 });
 
 type PostSchemaType = z.infer<typeof PostSchema>;
 
 
-const CreatePostModal = ({ open, onClose,user }: CreatePostModalProps) => {
+const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
   const { register, handleSubmit, watch, reset } = useForm<PostSchemaType>({
     resolver: zodResolver(PostSchema)
   });
-  const watchImage = watch("postImage");
+  const watchImage = watch("media");
   const { loading, error } = useSelector((state: RootState) => state.post);
+  const { userProfile } = useSelector((state: RootState) => state.profile);
   const dispatch = useDispatch<AppDispatch>();
   const onSubmit = (data: PostSchemaType) => {
     const formData = new FormData();
     formData.append('content', data.postContent);
     formData.append('caption', data.postContent);
-
-    if (data.postImage && data.postImage.length > 0) {
-      formData.append('media', data.postImage[0]);
+    if (data.media && data.media.length > 0) {
+      formData.append('media', data.media[0]);
     }
-    if (data.postVideo && data.postVideo.length > 0) {
-      formData.append('media', data.postVideo[0]);
-    }
-    if (data.postFile && data.postFile.length > 0) {
-      formData.append('media', data.postFile[0]);
-    }
-
 
     dispatch(createPost(formData));
     reset();
     if (!loading && !error) {
-      console.log("Post created successfully");
       onClose();
     }
   };
 
-
-
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
+    <Modal open={open} onClose={onClose}>
+      <Box sx={{ ...style, p: 0, borderRadius: 2, overflow: 'hidden' }}>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="flex items-center  mb-4">
-            <Avatar sx={{ width: 40, height: 40, margin: '10px' }} >
-              {user?.firstName.slice(0,2)}
-              </Avatar>
-            <div className="flex flex-col">
-              <span className="text-gray-500 text-lg  font-bold">{user?.firstName} {user?.lastName}</span>
-              <span className="text-gray-500 text-sm ">@{user?.firstName.toLocaleLowerCase()}_{user?.lastName.toLocaleLowerCase()}</span>
-            </div>
-          </div>
-          {error && <span className="text-red-500 text-sm">{error.message}</span>}
-          <TextField
-            style={{ outline: 'none' }}
-            label="What's on your mind?"
-            multiline
-            rows={4}
-            fullWidth
-            variant="outlined"
-            sx={{ mb: 2 }}
-            {...register("postContent")}
-          />
-          <div className="flex items-center justify-between space-x-4 mb-4">
-            <div className="">
-              <input type="file" accept='image/*' {...register("postImage")} id='postImage' className='hidden' />
-              <label htmlFor="postImage">
-                <ImageIcon sx={{ color: '#1976d2', cursor: 'pointer' }} />
-                <span className="text-gray-500">Image</span>
-              </label>
-            </div>
-            <div className="">
-              <input type="file" accept='video/*' {...register("postVideo")} id='postVideo' className='hidden' />
-              <label htmlFor="postVideo">
-                <VideoCallIcon sx={{ color: '#1976d2', cursor: 'pointer' }} />
-                <span className="text-gray-500">Video</span>
-              </label>
-            </div>
-            <div className="">
-              <input type="file" accept='.pdf,.doc,.docx' {...register("postFile")} id='postFile' className='hidden' />
-              <label htmlFor="postFile">
-                <DescriptionIcon sx={{ color: '#1976d2', cursor: 'pointer' }} />
-                <span className="text-gray-500">File</span>
-              </label>
-            </div>
-          </div>
+        {/* Header */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            px: 2,
+            py: 1,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.default'
+          }}
+        >
+          <span className="text-lg font-semibold">Create a post</span>
+          <Button onClick={onClose} sx={{ minWidth: 0 }}>✕</Button>
+        </Box>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
+          {/* User Info */}
+          <Box sx={{ display: 'flex', alignItems: 'center', px: 2, py: 2 }}>
+            <Avatar sx={{ width: 48, height: 48, mr: 2 }}>
+              {userProfile?.profilePictureUrl ? (
+                <img src={userProfile.profilePictureUrl} alt="Profile" className="w-full h-full object-cover rounded-full" />
+              ) : (
+                userProfile?.user.firstName.slice(0, 2)
+              )}
+            </Avatar>
+            <Box>
+              <span className="font-bold block">{userProfile?.user.firstName} {userProfile?.user.lastName}</span>
+            </Box>
+          </Box>
+
+          {/* Text Input */}
+          <Box sx={{ flexGrow: 1, px: 2 }}>
+            <TextField
+              placeholder="What do you want to talk about?"
+              multiline
+              minRows={3}
+              fullWidth
+              variant="standard"
+              InputProps={{ disableUnderline: true }}
+              {...register("postContent")}
+              sx={{ fontSize: '1rem' }}
+            />
+          </Box>
+
+          {/* Media Preview */}
           {watchImage && watchImage.length > 0 && (
-            <div className="mb-4">
-              <img src={URL.createObjectURL(watchImage[0])} alt="Post" className="w-full h-[200px] object-cover object-center rounded-md" />
-            </div>
+            <Box sx={{ px: 2, pb: 1 }}>
+              <img
+                src={URL.createObjectURL(watchImage[0])}
+                alt="Post"
+                className="w-full rounded-lg object-cover"
+              />
+            </Box>
           )}
-          <Button type="submit" variant="contained" color="primary" >
-            {loading ? <CircularProgress size={24} /> : 'Post'}
-          </Button>
+
+          {/* Footer */}
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1, borderTop: '1px solid', borderColor: 'divider' }}>
+            <Button variant="text" component="label" sx={{ textTransform: 'none' }}>
+              <AttachFileIcon />Media
+              <input type="file" hidden {...register("media")} />
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ borderRadius: 20, px: 3 }}
+              disabled={loading || !watch("postContent")}
+            >
+              {loading ? <CircularProgress size={20} /> : 'Post'}
+            </Button>
+          </Box>
         </form>
       </Box>
     </Modal>

@@ -72,7 +72,9 @@ const Home = () => {
                 <Card onClick={toggleModal}>
                     <div className="flex items-center" >
                         <Avatar sx={{ width: 40, height: 40, margin: '10px' }} >
-                            {userProfile?.firstName.slice(0, 2)}
+                            {userProfile?.profilePictureUrl ?
+                                <img src={userProfile.profilePictureUrl} alt="Avatar" />
+                                : userProfile?.user.firstName.slice(0, 2)}
 
                         </Avatar>
                         <TextField
@@ -117,7 +119,7 @@ const Home = () => {
                 </div>
                 {loading && <CircularProgress />}
                 <div>
-                    <CreatePostModal open={openCreateModal} user={userProfile} onClose={toggleModal} />
+                    <CreatePostModal open={openCreateModal} user={userProfile?.user} onClose={toggleModal} />
                 </div>
             </Grid>
             {/* Right Sidebar */}

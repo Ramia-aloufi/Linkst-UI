@@ -1,10 +1,10 @@
 import { createSlice, isRejectedWithValue } from "@reduxjs/toolkit";
-import type { User } from "../../model/User";
-import { GetUserProfile, UpdateUserProfile } from "./ProfileService";
+import { GetUserProfile, updateProfile } from "./ProfileService";
 import type { ApiError } from "../../model/ApiError";
+import type { Profile } from "../../model/Profile";
 
 type ProfileSliceType = {
-    userProfile: User | null,
+    userProfile: Profile | null,
     loading: boolean,
     error: ApiError | null,
 };
@@ -24,7 +24,7 @@ const ProfileSlice = createSlice({
             .addCase(GetUserProfile.fulfilled, (state, action) => {
                 state.userProfile = action.payload;
             })
-            .addCase(UpdateUserProfile.fulfilled, (state, action) => {
+            .addCase(updateProfile.fulfilled, (state, action) => {
                 state.userProfile = { ...state.userProfile, ...action.payload };
             })
             .addMatcher(

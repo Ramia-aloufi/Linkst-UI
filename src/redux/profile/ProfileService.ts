@@ -1,15 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
-import type { User } from "../../model/User";
 import type { ApiError } from "../../model/ApiError";
 import api from "../../config/Api";
+import type { Profile } from "../../model/Profile";
 
 
-export const GetUserProfile = createAsyncThunk<User,void, { rejectValue: ApiError }>(
+export const GetUserProfile = createAsyncThunk<Profile, void, { rejectValue: ApiError }>(
     'profile/getUserProfile',
     async (_, { rejectWithValue }) => {
         try {
-            const { data } = await api.get(`user/profile`);
+            const { data } = await api.get(`profile/user`);
             return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;
@@ -22,11 +22,11 @@ export const GetUserProfile = createAsyncThunk<User,void, { rejectValue: ApiErro
     }
 );
 
-export const UpdateUserProfile = createAsyncThunk<User, User, { rejectValue: ApiError }>(
-    'profile/updateUserProfile',
-    async (userData: User, { rejectWithValue }) => {
+export const updateProfile = createAsyncThunk<Profile, FormData, { rejectValue: ApiError }>(
+    'profile/updateProfile',
+    async (userData: FormData, { rejectWithValue }) => {
         try {
-            const { data } = await api.put(`user/profile`, userData);
+            const { data } = await api.put(`profile/${userData.get("id")}`, userData);
             return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;
@@ -34,8 +34,7 @@ export const UpdateUserProfile = createAsyncThunk<User, User, { rejectValue: Api
                 message: 'Unexpected error',
                 error: 'Unknown error',
             };
-
-return rejectWithValue(apiError);
+            return rejectWithValue(apiError);
         }
     }
 );

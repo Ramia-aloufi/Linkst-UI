@@ -61,7 +61,7 @@ const PostCard = ({ post }: { post: Post }) => {
         subheader={new Date(post.createdAt).toLocaleDateString()}
       />
       <CardContent>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }} style={{ whiteSpace: 'pre-line' }}>
           {post.caption}
         </Typography>
       </CardContent>
