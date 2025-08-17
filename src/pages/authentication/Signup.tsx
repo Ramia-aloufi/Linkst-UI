@@ -1,13 +1,15 @@
 
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Button, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { TextField, Button, RadioGroup, FormControlLabel, Radio, Alert } from "@mui/material";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import z from "zod";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { useDispatch, useSelector } from "react-redux";
 import { SignupUser } from "../../redux/auth/AuthService";
 import { useNavigate } from "react-router-dom";
+import { getPosts } from "../../redux/post/PostService";
+import { GetUserProfile } from "../../redux/profile/ProfileService";
 
 const SignupSchema = z.object({
     firstName: z
@@ -29,7 +31,7 @@ const SignupSchema = z.object({
 type Inputs = z.infer<typeof SignupSchema>;
 
 const Signup = () => {
-    const { token, loading } = useSelector((state: RootState) => state.auth);
+    const { loading, error } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch<AppDispatch>()
     const navigate = useNavigate()
     const {
@@ -41,11 +43,12 @@ const Signup = () => {
     });
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
-        console.log("Signup Data:", data);
-        dispatch(SignupUser(data));
-        if (token) {
-            navigate("/")
-        }
+        dispatch(SignupUser(data)).unwrap().then(() => {
+            navigate("/");
+            dispatch(GetUserProfile());
+            dispatch(getPosts(0));
+
+        });
     };
 
     return (
@@ -98,8 +101,13 @@ const Signup = () => {
                 <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
                 <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
             </RadioGroup>
+            {error && (
+                <Alert severity="error" icon={false} sx={{ fontSize: '0.75rem' }}>
+                    {error.message || "An error occurred during signup"}
+                </Alert>
+            )}
             <Button sx={{ padding: " .8rem 0rem", width: "350px" }} type="submit" variant="contained" color="primary" fullWidth>
-                {!loading ? "T" : "F"}
+                {!loading ? "Sign Up" : "Loading..."}
             </Button>
         </form>
     );

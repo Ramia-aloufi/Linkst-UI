@@ -14,6 +14,7 @@ export type Post = {
     user: {
         id: string;
         fullName: string;
+        profilePictureUrl?: string;
     };
     likeCount:number
     commentCount:number

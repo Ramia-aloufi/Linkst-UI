@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { Avatar, Button, CircularProgress, TextField } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { AppDispatch, RootState } from '../../redux/Store';
@@ -35,7 +35,6 @@ type CreatePostModalProps = {
 
 const PostSchema = z.object({
   postContent: z.string().min(1, 'Post content is required'),
-  postCaption: z.string().min(1, 'Post caption is required'),
   media: z.instanceof(FileList).optional(),
 });
 
@@ -43,26 +42,30 @@ type PostSchemaType = z.infer<typeof PostSchema>;
 
 
 const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
-  const { register, handleSubmit, watch, reset } = useForm<PostSchemaType>({
+  const { register, handleSubmit, watch, reset , formState: { errors } } = useForm<PostSchemaType>({
     resolver: zodResolver(PostSchema)
   });
   const watchImage = watch("media");
+
   const { loading, error } = useSelector((state: RootState) => state.post);
   const { userProfile } = useSelector((state: RootState) => state.profile);
   const dispatch = useDispatch<AppDispatch>();
-  const onSubmit = (data: PostSchemaType) => {
+
+  const onSubmit: SubmitHandler<PostSchemaType> = (data) => {
+    console.log(data);
+
     const formData = new FormData();
     formData.append('content', data.postContent);
-    formData.append('caption', data.postContent);
     if (data.media && data.media.length > 0) {
       formData.append('media', data.media[0]);
     }
 
-    dispatch(createPost(formData));
-    reset();
-    if (!loading && !error) {
-      onClose();
-    }
+    dispatch(createPost(formData)).unwrap().then(() => {
+      reset();
+      if (!loading && !error) {
+        onClose();
+      }
+    });
   };
 
   return (
@@ -110,6 +113,8 @@ const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
               minRows={3}
               fullWidth
               variant="standard"
+              helperText={errors.postContent?.message}
+              FormHelperTextProps={{ sx: { color: 'error.main' } }}
               InputProps={{ disableUnderline: true }}
               {...register("postContent")}
               sx={{ fontSize: '1rem' }}
@@ -129,7 +134,7 @@ const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
 
           {/* Footer */}
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1, borderTop: '1px solid', borderColor: 'divider' }}>
-            <Button variant="text" component="label" sx={{ textTransform: 'none' }}>
+            <Button component="label" sx={{ textTransform: 'none' }}>
               <AttachFileIcon />Media
               <input type="file" hidden {...register("media")} />
             </Button>
@@ -138,7 +143,9 @@ const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
               variant="contained"
               sx={{ borderRadius: 20, px: 3 }}
               disabled={loading || !watch("postContent")}
+              onClick={()=>console.log("Post button clicked")}
             >
+              {error && <span className="text-red-500">{error.message}</span> }
               {loading ? <CircularProgress size={20} /> : 'Post'}
             </Button>
           </Box>

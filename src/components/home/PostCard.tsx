@@ -19,6 +19,8 @@ const CommentSchema = z.object({
 
 type input = z.infer<typeof CommentSchema>;
 const PostCard = ({ post }: { post: Post }) => {
+  console.log(post.user.profilePictureUrl);
+  
 
   const { comments } = useSelector((state: RootState) => state.comment);
   const dispatch = useDispatch<AppDispatch>();
@@ -47,10 +49,13 @@ const PostCard = ({ post }: { post: Post }) => {
     <Card>
       <CardHeader
         avatar={
-          <Avatar >
-            {post.user.fullName.slice(0, 2)}
-          </Avatar>
-        }
+          post.user.profilePictureUrl ? (
+            <Avatar src={post.user.profilePictureUrl} />
+          ) : (
+            <Avatar>
+              {post.user.fullName.charAt(0)}{post.user.fullName.charAt(1)}
+            </Avatar>
+          )}
         action={
           <IconButton>
             <ShareIcon />
@@ -62,15 +67,17 @@ const PostCard = ({ post }: { post: Post }) => {
       />
       <CardContent>
         <Typography variant="body2" sx={{ color: 'text.secondary' }} style={{ whiteSpace: 'pre-line' }}>
-          {post.caption}
+          {post.content}
         </Typography>
       </CardContent>
+      {post.media && post.media.length > 0 &&
       <CardMedia
         component="img"
         image={post.media}
         alt={post.caption}
         sx={{ height: 300 }}
       />
+}
       <CardActions disableSpacing>
         <IconButton onClick={handleLike}>
           {post.likedByCurrentUser ? (

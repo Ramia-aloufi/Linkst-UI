@@ -1,10 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Alert } from "@mui/material";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import z from "zod";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { LoginUser } from "../../redux/auth/AuthService";
+import { getPosts } from "../../redux/post/PostService";
+import { GetUserProfile } from "../../redux/profile/ProfileService";
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address" }),
@@ -18,7 +20,7 @@ type Inputs = z.infer<typeof LoginSchema>;
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { loading } = useSelector((state: RootState) => state.auth);
+  const {loading, error } = useSelector((state: RootState) => state.auth);
   const {
     register,
     handleSubmit,
@@ -28,7 +30,10 @@ const Login = () => {
   });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    dispatch(LoginUser(data));
+    dispatch(LoginUser(data)).unwrap().then(() => {
+      dispatch(GetUserProfile());
+      dispatch(getPosts(0));
+    });
   };
 
   return (
@@ -51,6 +56,11 @@ const Login = () => {
         helperText={errors.password?.message}
         {...register("password")}
       />
+      {error && (
+        <Alert severity="error" icon={false} sx={{fontSize: '0.75rem'}}>
+          {error.message || "An error occurred during login"}
+        </Alert>
+      )}
       <Button sx={{ width: 350, padding: "12px 16px" }} type="submit" variant="contained" color="primary">
         {loading ? "loading" : "Log In"}
       </Button>

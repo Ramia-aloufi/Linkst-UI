@@ -56,7 +56,7 @@ const Home = () => {
 
 
     return (
-        <Grid container spacing={4} >
+        <Grid container spacing={12} >
             <Grid size={8} className="hideScrollBar space-y-5 overflow-y-scroll h-screen" >
                 <Card className="flex items-center justify-evenly p-4 bg-gray-200">
                     <div className="flex items-center justify-center flex-col cursor-pointer space-y-2">

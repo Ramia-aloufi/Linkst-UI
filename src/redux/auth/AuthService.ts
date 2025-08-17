@@ -1,18 +1,36 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../config/Api";
+import type { ApiError } from "../../model/ApiError";
+import type { AxiosError } from "axios";
 
+type LoginReq = {
+    email: string;
+    password: string;
+}
+type LoginRes = {
+    token: string;
+    message: string
+}
 
-export const LoginUser = createAsyncThunk(
+export const LoginUser = createAsyncThunk<LoginRes, LoginReq, { rejectValue: ApiError }>(
     'auth/loginUser',
-    async (userData: { email: string; password: string }, { rejectWithValue }) => {
+    async (userData, { rejectWithValue }) => {
         try {
-            const {data} = await api.post(`auth/login`, userData);
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-            }
+            const { data } = await api.post(`auth/login`, userData);
             return data;
-        } catch (error) {
-            return rejectWithValue(error instanceof Error ? error.message : 'An error occurred during login');
+        } catch (err) {
+            const axiosError = err as AxiosError<ApiError>;
+
+            // If server sent a structured ApiError, grab it
+            if (axiosError.response?.data) {
+                return rejectWithValue(axiosError.response.data);
+            }
+
+            // Fallback (network error, timeout, etc.)
+            return rejectWithValue({
+                message: axiosError.message || "Network error",
+                error: axiosError.message || "Network error",
+            });
         }
     }
 )

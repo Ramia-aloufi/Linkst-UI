@@ -9,9 +9,8 @@ type AuthTypes = {
     error: ApiError | null,
 };
 
-
 const initialState: AuthTypes = {
-    token: null,
+    token: localStorage.getItem("token"),
     loading: false,
     error: null,
 };
@@ -28,9 +27,11 @@ const AuthSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(LoginUser.fulfilled, (state, action) => {
+                localStorage.setItem("token", action.payload.token);
                 state.token = action.payload.token;
             })
             .addCase(SignupUser.fulfilled, (state, action) => {
+                localStorage.setItem("token", action.payload.token);
                 state.token = action.payload.token;
             })
             .addMatcher(

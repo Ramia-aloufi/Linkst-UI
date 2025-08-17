@@ -7,11 +7,6 @@ import Reels from './components/reels/Reels';
 import Authentication from './pages/authentication/authentication'
 import HomeLayout from './pages/home/HomeLayout';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { GetUserProfile } from './redux/profile/ProfileService';
-import type { AppDispatch } from './redux/Store';
-import { getPosts } from './redux/post/PostService';
 import { Community } from './pages/Community';
 
 
@@ -21,16 +16,6 @@ import NotFound from './pages/NotFound';
 
 function App() {
 
-  const dispatch = useDispatch<AppDispatch>()
-  const initialized = useRef(false);
-
-  useEffect(() => {
-    if (!initialized.current) {
-      dispatch(GetUserProfile())
-      dispatch(getPosts(0))
-    }
-    initialized.current = true
-  }, [dispatch])
 
   return (
     <ThemeProvider>
