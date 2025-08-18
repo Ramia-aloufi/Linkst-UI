@@ -45,6 +45,7 @@ const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
   const { register, handleSubmit, watch, reset , formState: { errors } } = useForm<PostSchemaType>({
     resolver: zodResolver(PostSchema)
   });
+  
   const watchImage = watch("media");
 
   const { loading, error } = useSelector((state: RootState) => state.post);

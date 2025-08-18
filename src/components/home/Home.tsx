@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { getPosts } from "../../redux/post/PostService";
 import RightBar from "./Rightbar";
+import StoryModal from "../story/StoryModal";
 
 
 
@@ -21,11 +22,17 @@ const Home = () => {
     const { userProfile } = useSelector((state: RootState) => state.profile);
     const dispatch = useDispatch<AppDispatch>();
     const [openCreateModal, setOpenCreateModal] = useState(false);
+    const [openStoryModal, setOpenStoryModal] = useState(false);
+
     const [loading, setLoading] = useState(false)
 
 
     const toggleModal = () => {
         setOpenCreateModal((prev) => !prev);
+    };
+
+    const toggleStoryModal = () => {
+        setOpenStoryModal((prev) => !prev);
     };
 
 
@@ -59,7 +66,7 @@ const Home = () => {
         <Grid container spacing={12} >
             <Grid size={8} className="hideScrollBar space-y-5 overflow-y-scroll h-screen" >
                 <Card className="flex items-center justify-evenly p-4 bg-gray-200">
-                    <div className="flex items-center justify-center flex-col cursor-pointer space-y-2">
+                    <div className="flex items-center justify-center flex-col cursor-pointer space-y-2" onClick={toggleStoryModal}>
                         <Avatar sx={{ width: 70, height: 70 }} >
                             <AddIcon sx={{ width: 40, height: 40 }} />
                         </Avatar>
@@ -120,6 +127,7 @@ const Home = () => {
                 {loading && <CircularProgress />}
                 <div>
                     <CreatePostModal open={openCreateModal} user={userProfile?.user} onClose={toggleModal} />
+                    <StoryModal open={openStoryModal} onClose={toggleStoryModal} />
                 </div>
             </Grid>
             {/* Right Sidebar */}

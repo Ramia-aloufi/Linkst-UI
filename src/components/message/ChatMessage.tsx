@@ -6,7 +6,7 @@ import { useThemeContext } from "../../context/ThemeContext"
 
 const ChatMessage = ({message}:{message:Message}) => {
   const {userProfile} = useSelector((state:RootState)=>state.profile)
-    const isUser = userProfile?.email == message.user.email
+    const isUser = userProfile?.user.email == message.user.email
       const { mode } = useThemeContext();
   const receiverTheme = mode === 'light' ? 'bg-gray-100' : 'bg-gray-800';
   const senderTheme = mode === 'light' ? 'bg-[#F5F6EF]' : 'bg-[#2C2F33]';

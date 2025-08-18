@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, Grid, TextField, Typography } from "@mui/material"
+import { Avatar, Box, Button, Card, Grid, TextField, Typography } from "@mui/material"
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import SearchUser from "./SearchUser";
 import ChatMessage from "./ChatMessage";
@@ -72,6 +72,7 @@ const Message = () => {
                 </Grid>
                 {/* {Right Sidebar} */}
                 <Grid size={9} >
+                    {selectedChatID ? (
                     <div className="flex flex-col h-full space-y-3">
                         <Card variant="outlined" className=" flex justify-between items-center border-l p-5 ">
                             <div className="flex items-center space-x-3">
@@ -97,8 +98,14 @@ const Message = () => {
                             </div>
                         </div>
                         </Card>
-                    </div>
-
+                    </div>                    ) : (
+                        <Card className=" flex flex-col  justify-center items-center bg-red-400 h-[85vh]">
+                        <Typography variant="body1" className="text-center mb-20 flex">Select a chat to start messaging</Typography>
+                        <Box className="flex justify-center items-center mt-4">
+                            <Button variant="contained" color="primary">Start Chat</Button>
+                        </Box>
+                        </Card>
+                    )}
                 </Grid>
             </Grid>
     )

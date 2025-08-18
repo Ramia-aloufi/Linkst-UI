@@ -4,9 +4,10 @@ import UserChatCard from "./UserChatCard";
 import type { UUID } from "crypto";
 import { getallMessages } from "../../redux/message/MessageService";
 import { selectChat } from "../../redux/message/MessageSlice";
+
+
 const UserChats = () => {
     const { chat } = useSelector((state: RootState) => state.message);
-    //   const {userProfile} =  useSelector((state: RootState) => state.profile);
     const dispatch = useDispatch<AppDispatch>()
 
     const onMessaging = (chatId: UUID) => {
@@ -16,10 +17,7 @@ const UserChats = () => {
 
     if (!chat || chat.length === 0) {
         return <span>Start chatting</span>;
-
     }
-
-
 
     return (
         <div className="space-y-3 ">
