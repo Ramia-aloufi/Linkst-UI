@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SignupUser } from "../../redux/auth/AuthService";
 import { useNavigate } from "react-router-dom";
 import { getPosts } from "../../redux/post/PostService";
-import { GetUserProfile } from "../../redux/profile/ProfileService";
+import { getMe } from "../../redux/user/UserService";
 
 const SignupSchema = z.object({
     firstName: z
@@ -45,7 +45,7 @@ const Signup = () => {
     const onSubmit: SubmitHandler<Inputs> = (data) => {
         dispatch(SignupUser(data)).unwrap().then(() => {
             navigate("/");
-            dispatch(GetUserProfile());
+      dispatch(getMe());
             dispatch(getPosts(0));
 
         });

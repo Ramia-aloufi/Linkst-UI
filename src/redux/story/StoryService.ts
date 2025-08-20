@@ -4,7 +4,7 @@ import api from "../../config/Api";
 import type { ApiError } from "../../model/ApiError";
 import type { AxiosError } from "axios";
 
-export const createStory = createAsyncThunk<Story, Story, { rejectValue: ApiError }>(
+export const createStory = createAsyncThunk<Story, FormData, { rejectValue: ApiError }>(
   "stories/create",
   async (storyData, { rejectWithValue }) => {
 
@@ -32,6 +32,22 @@ export const fetchStories = createAsyncThunk<Story[], void, { rejectValue: ApiEr
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await api.get("story/user");
+      return data;
+    } catch (err) {
+      const error = err as AxiosError<ApiError>;
+      const apiError = error.response?.data ?? {
+        message: 'Unexpected error',
+        error: 'Unknown error',
+      };
+      return rejectWithValue(apiError);
+    }
+  }
+);
+export const GetAllStories = createAsyncThunk<Story[], void, { rejectValue: ApiError }>(
+  "stories/getAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("story/all");
       return data;
     } catch (err) {
       const error = err as AxiosError<ApiError>;

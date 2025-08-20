@@ -21,10 +21,10 @@ import logo from "../../assets/Linkst11.png";
 import { ThemeToggleButton } from "./ThemeToggleButton";
 
 const Navbar = () => {
-  const { userProfile } = useSelector((state: RootState) => state.profile);
+  const { me } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
   const location = useLocation();
-const img = userProfile?.profilePictureUrl || "https://www.w3schools.com/howto/img_avatar.png";
+const img = me?.profile?.profilePictureUrl || "https://www.w3schools.com/howto/img_avatar.png";
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -101,11 +101,10 @@ const img = userProfile?.profilePictureUrl || "https://www.w3schools.com/howto/i
           </Avatar>
           <Box className="hidden sm:flex flex-col">
             <span className="text-sm font-semibold">
-              {userProfile?.user.firstName} {userProfile?.user.lastName}
+              {me?.firstName} {me?.lastName}
             </span>
             <span className="text-xs text-gray-500">
-              @{userProfile?.user.firstName?.toLowerCase()}_
-              {userProfile?.user.lastName?.toLowerCase()}
+              @{me?.firstName?.toLowerCase()}_{me?.lastName?.toLowerCase()}
             </span>
           </Box>
         </Box>
@@ -170,11 +169,10 @@ const img = userProfile?.profilePictureUrl || "https://www.w3schools.com/howto/i
               </Avatar>
               <Box className="flex flex-col">
                 <span className="text-sm font-semibold">
-                  {userProfile?.user.firstName} {userProfile?.user.lastName}
+                  {me?.firstName} {me?.lastName}
                 </span>
                 <span className="text-xs text-gray-500">
-                  @{userProfile?.user.firstName?.toLowerCase()}_
-                  {userProfile?.user.lastName?.toLowerCase()}
+                  @{me?.firstName?.toLowerCase()}_{me?.lastName?.toLowerCase()}
                 </span>
               </Box>
             </Box>

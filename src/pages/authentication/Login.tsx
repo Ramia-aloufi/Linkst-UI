@@ -6,7 +6,7 @@ import z from "zod";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { LoginUser } from "../../redux/auth/AuthService";
 import { getPosts } from "../../redux/post/PostService";
-import { GetUserProfile } from "../../redux/profile/ProfileService";
+import { getMe } from "../../redux/user/UserService";
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Enter a valid email address" }),
@@ -31,7 +31,7 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     dispatch(LoginUser(data)).unwrap().then(() => {
-      dispatch(GetUserProfile());
+      dispatch(getMe());
       dispatch(getPosts(0));
     });
   };

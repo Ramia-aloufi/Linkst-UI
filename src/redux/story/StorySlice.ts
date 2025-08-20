@@ -1,12 +1,13 @@
 import type { Story } from "../../model/Story";
 import { createSlice, isRejectedWithValue } from "@reduxjs/toolkit";
-import { createStory, fetchStories } from "./StoryService";
+import { createStory, fetchStories, GetAllStories } from "./StoryService";
 import type { ApiError } from "../../model/ApiError";
 
 
 
 type initialState = {
     stories: Story[];
+    userStories: Story[];
     loading: boolean;
     error: ApiError | null;
 };
@@ -14,11 +15,12 @@ type initialState = {
 
 const initialState: initialState = {
     stories: [],
+    userStories: [],
     loading: false,
     error: null,
 };
 
-export const StorySlice = createSlice({
+ const StorySlice = createSlice({
     name: "story",
     initialState,
     reducers: {
@@ -30,6 +32,10 @@ export const StorySlice = createSlice({
                 state.stories.push(action.payload);
             })
             .addCase(fetchStories.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userStories = action.payload;
+            })
+            .addCase(GetAllStories.fulfilled, (state, action) => {
                 state.loading = false;
                 state.stories = action.payload;
             })
@@ -46,5 +52,5 @@ export const StorySlice = createSlice({
             );
     },
 });
-
+export const StoryReducer = StorySlice.reducer;
 

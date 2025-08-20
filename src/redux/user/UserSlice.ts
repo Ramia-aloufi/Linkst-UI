@@ -1,31 +1,47 @@
 import { createSlice, isRejectedWithValue } from "@reduxjs/toolkit"
 import type { ApiError } from "../../model/ApiError"
-import type { User } from "../../model/User"
-import { searchUser } from "./UserService"
+import type { User, UserInfo } from "../../model/User"
+import { getMe, getUserById, getUsersStory, searchUser } from "./UserService"
+import type { UserStory } from "../../model/UsersStory"
 
 type InitialStateType = {
-    users:User[]
-    loading:boolean
-    error:ApiError|null
+    searchUsers: User[]
+    me: UserInfo | null
+    user: UserInfo | null
+    usersStories: UserStory[] | null
+    loading: boolean
+    error: ApiError | null
 }
 
 
-const initialState:InitialStateType = {
-    users:[],
-    loading:false,
-    error:null
+const initialState: InitialStateType = {
+    searchUsers: [],
+    me: null,
+    user: null,
+    usersStories: null,
+    loading: false,
+    error: null
 }
 
 const userSlice = createSlice({
-    name:"user",
+    name: "user",
     initialState,
-    reducers:{},
-    extraReducers:(builder)=>{
+    reducers: {},
+    extraReducers: (builder) => {
         builder
-        .addCase(searchUser.fulfilled,(state,action)=>{
-            state.users = action.payload
-        })
-                    .addMatcher(
+            .addCase(searchUser.fulfilled, (state, action) => {
+                state.searchUsers = action.payload
+            })
+            .addCase(getMe.fulfilled, (state, action) => {
+                state.me = action.payload
+            })
+            .addCase(getUserById.fulfilled, (state, action) => {
+                state.user = action.payload
+            })
+            .addCase(getUsersStory.fulfilled, (state, action) => {
+                state.usersStories = action.payload
+            })
+            .addMatcher(
                 (action) => action.type.endsWith('/pending'),
                 (state) => {
                     state.loading = true;

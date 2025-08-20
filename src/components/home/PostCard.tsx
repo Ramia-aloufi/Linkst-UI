@@ -18,10 +18,7 @@ const CommentSchema = z.object({
 });
 
 type input = z.infer<typeof CommentSchema>;
-const PostCard = ({ post }: { post: Post }) => {
-  console.log(post.user.profilePictureUrl);
-  
-
+const PostCard = ({ post }: { post: Post }) => {  
   const { comments } = useSelector((state: RootState) => state.comment);
   const dispatch = useDispatch<AppDispatch>();
   const { register, handleSubmit, reset } = useForm<input>({

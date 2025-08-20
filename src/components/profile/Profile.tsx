@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Card, Tab, Tabs, Typography } from "@mui/material"
-import { useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { GetUserProfile } from "../../redux/profile/ProfileService";
@@ -19,8 +19,7 @@ const tabs = [
 ]
 
 const Profile = () => {
-  const { userPosts } = useSelector((state: RootState) => state.post);
-  const { userProfile } = useSelector((state: RootState) => state.profile);
+  const { me } = useSelector((state: RootState) => state.user);
   const [openProfileImg, setOpenProfileImg] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -47,7 +46,7 @@ const Profile = () => {
       <div className="rounded-md ">
         <div className="h-[15rem] relative">
           <img
-            src={userProfile?.headerImageUrl || img}
+            src={me?.profile.headerImageUrl || img}
             alt="profile"
             className="w-full h-full object-cover rounded-t-md"
           />
@@ -62,12 +61,12 @@ const Profile = () => {
         </div>
         <div className="px-5 h-[5rem] mt-5 flex justify-between items-start relative">
           <div className="relative ">
-            {userProfile?.profilePictureUrl ? (
+            {me?.profile?.profilePictureUrl ? (
 
-              <Avatar className="transform -translate-y-24 border-2 border-white" sx={{ width: "10rem", height: "10rem" }} alt="profile" src={userProfile?.profilePictureUrl} />
+              <Avatar className="transform -translate-y-24 border-2 border-white" sx={{ width: "10rem", height: "10rem" }} alt="profile" src={me?.profile?.profilePictureUrl} />
             ) : (
               <Avatar className="transform -translate-y-24 border-2 border-white" sx={{ width: "10rem", height: "10rem" }} alt="profile">
-                {userProfile?.user.firstName.slice(0, 2)}
+                {me?.firstName.slice(0, 2)}
               </Avatar>
             )}
             {isCurrentUser &&
@@ -83,16 +82,16 @@ const Profile = () => {
         </div>
         <div className="pl-7">
           <div className="">
-            <Typography variant="h4" className="font-bold text-xl ">{userProfile?.user.fullName}</Typography>
-            <Typography variant="body1">@{userProfile?.user.fullName.replace(" ", "_").toLocaleLowerCase()}</Typography>
+            <Typography variant="h4" className="font-bold text-xl ">{me?.fullName}</Typography>
+            <Typography variant="body1">@{me?.fullName}</Typography>
           </div>
           <div className="py-2">
-            <Typography variant="body2">{userProfile?.bio || "No bio available"}</Typography>
+            <Typography variant="body2">{me?.profile.bio || "No bio available"}</Typography>
           </div>
           <div className="flex gap-5 items-center py-7 ">
-            <span>{userPosts.length} post</span>
-            <span>{userProfile?.user.followers.length} followers</span>
-            <span>{userProfile?.user.following.length} following</span>
+            <span>{me?.posts.length} post</span>
+            <span>{me?.followers.length} followers</span>
+            <span>{me?.following.length} following</span>
           </div>
         </div>
         <section>
@@ -107,7 +106,7 @@ const Profile = () => {
           </Box>
           <div className="">
             {value == "post" && <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 p-5">
-              {userPosts.map((post) => (
+              {me?.posts.map((post) => (
                 <ProfilePosts key={post.id} post={post} />
               ))}
             </div>}

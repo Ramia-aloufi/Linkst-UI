@@ -42,8 +42,6 @@ const PostSelector = createSlice({
                 state.hasNext = action.payload.hasNext;
                 state.hasPrevious = action.payload.hasPrevious
                 state.page = action.payload.currentPage + 1
-                console.log(state.posts.length);
-
             })
             .addCase(createPost.fulfilled, (state, action) => {
                 state.posts.push(action.payload);

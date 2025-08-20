@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { AppDispatch, RootState } from '../../redux/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost } from '../../redux/post/PostService';
-import type { User } from '../../model/User';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 
@@ -27,9 +26,7 @@ const style = {
 
 type CreatePostModalProps = {
   open: boolean;
-  onClose: () => void;
-  user: User | undefined
-};
+  onClose: () => void};
 
 
 
@@ -49,7 +46,7 @@ const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
   const watchImage = watch("media");
 
   const { loading, error } = useSelector((state: RootState) => state.post);
-  const { userProfile } = useSelector((state: RootState) => state.profile);
+  const { me } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
 
   const onSubmit: SubmitHandler<PostSchemaType> = (data) => {
@@ -95,14 +92,14 @@ const CreatePostModal = ({ open, onClose }: CreatePostModalProps) => {
           {/* User Info */}
           <Box sx={{ display: 'flex', alignItems: 'center', px: 2, py: 2 }}>
             <Avatar sx={{ width: 48, height: 48, mr: 2 }}>
-              {userProfile?.profilePictureUrl ? (
-                <img src={userProfile.profilePictureUrl} alt="Profile" className="w-full h-full object-cover rounded-full" />
+              {me?.profile?.profilePictureUrl ? (
+                <img src={me.profile.profilePictureUrl} alt="Profile" className="w-full h-full object-cover rounded-full" />
               ) : (
-                userProfile?.user.firstName.slice(0, 2)
+                me?.firstName.slice(0, 2)
               )}
             </Avatar>
             <Box>
-              <span className="font-bold block">{userProfile?.user.firstName} {userProfile?.user.lastName}</span>
+              <span className="font-bold block">{me?.firstName} {me?.lastName}</span>
             </Box>
           </Box>
 

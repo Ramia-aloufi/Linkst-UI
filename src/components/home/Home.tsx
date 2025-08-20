@@ -19,7 +19,9 @@ import StoryModal from "../story/StoryModal";
 
 const Home = () => {
     const { posts, error, page, hasNext } = useSelector((state: RootState) => state.post);
-    const { userProfile } = useSelector((state: RootState) => state.profile);
+    const { me,usersStories } = useSelector((state: RootState) => state.user);
+    // const { stories } = useSelector((state: RootState) => state.story);
+
     const dispatch = useDispatch<AppDispatch>();
     const [openCreateModal, setOpenCreateModal] = useState(false);
     const [openStoryModal, setOpenStoryModal] = useState(false);
@@ -72,16 +74,16 @@ const Home = () => {
                         </Avatar>
                         <Typography variant="body2" >Add Story</Typography>
                     </div>
-                    {Array.from(Array(5)).map((_, index) => (
-                        <Stories key={index} img={`https://mui.com/static/images/avatar/${index + 1}.jpg`} name={`User ${index + 1}`} />
+                    {usersStories?.map((users, index) => (
+                        <Stories key={index} user={users} />
                     ))}
                 </Card>
                 <Card onClick={toggleModal}>
                     <div className="flex items-center" >
                         <Avatar sx={{ width: 40, height: 40, margin: '10px' }} >
-                            {userProfile?.profilePictureUrl ?
-                                <img src={userProfile.profilePictureUrl} alt="Avatar" />
-                                : userProfile?.user.firstName.slice(0, 2)}
+                            {me?.profile?.profilePictureUrl ?
+                                <img src={me.profile.profilePictureUrl} alt="Avatar" />
+                                : me?.firstName.slice(0, 2)}
 
                         </Avatar>
                         <TextField
@@ -126,7 +128,7 @@ const Home = () => {
                 </div>
                 {loading && <CircularProgress />}
                 <div>
-                    <CreatePostModal open={openCreateModal} user={userProfile?.user} onClose={toggleModal} />
+                    <CreatePostModal open={openCreateModal} onClose={toggleModal} />
                     <StoryModal open={openStoryModal} onClose={toggleStoryModal} />
                 </div>
             </Grid>
