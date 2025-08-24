@@ -7,13 +7,19 @@ import type { AppDispatch, RootState } from "../../redux/Store";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { createMessage, getAllChat } from "../../redux/message/MessageService";
 import UserChats from "./UserChats";
-import { GetUserProfile } from "../../redux/profile/ProfileService";
-import { connectWebSocket, disconnectWebSocket } from "../../config/connectWebSocket";
+import { connectWebSocket, disconnectWebSocket, sendMessage } from "../../config/connectWebSocket";
 import { addNewMessage } from "../../redux/message/MessageSlice";
+
+
 const Message = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { messages, selectedChatID } = useSelector((state: RootState) => state.message)
+    const { messages, selectedChatID, chatWithUserID } = useSelector((state: RootState) => state.message)
     const [msg, setMsg] = useState<{ content: string, img: File | null }>({ content: "", img: null })
+    const { me } = useSelector((state: RootState) => state.user)
+
+
+    
+
     const sendMsg = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key == "Enter") {
             const data = new FormData
@@ -22,10 +28,14 @@ const Message = () => {
             if (msg.img) {
                 data.append("image", msg.img)
             }
-            if (selectedChatID)
-                dispatch(createMessage({ chatID: selectedChatID, msg: data }))
-            setMsg({ content: "", img: null })
+            console.log('Selected chat ID:', selectedChatID);
 
+            if (selectedChatID)
+            dispatch(createMessage({ chatID: selectedChatID, msg: data })).unwrap().then((data) => {
+                if (chatWithUserID)
+                    sendMessage(chatWithUserID?.toString(), data);
+                setMsg({ content: "", img: null })
+                });
         }
     }
     const uploadImg = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,19 +45,20 @@ const Message = () => {
 
     useEffect(() => {
         dispatch(getAllChat());
-        dispatch(GetUserProfile())
     }, [dispatch]);
 
     useEffect(() => {
-        if (selectedChatID)
-            connectWebSocket(selectedChatID.toString(), (msg) => {
+        if (me?.id)
+            connectWebSocket(me.id.toString(), (msg) => {
+                console.log('New message via WebSocket:', msg);
                 dispatch(addNewMessage(msg));
             });
 
         return () => {
             disconnectWebSocket();
         };
-    }, [selectedChatID, dispatch]);
+    }, [me?.id, dispatch]);
+
     const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -59,21 +70,19 @@ const Message = () => {
     return (
             <Grid container spacing={4} className={"h-[85vh] overflow-y-hidden"}>
                 {/* {Left Sidebar} */}
-                <Grid size={3}>
-                    <Card variant="outlined" className="flex p-2 justify-between space-x-2">
-                        <div className="w-full">
+                <Grid size={{xs:12, md:4,lg:3}} >
+                    <Card variant="outlined" className="w-full h-full flex flex-col p-2 space-x-2">
                             <Typography className="py-2 pl-5" variant="h6">Messages</Typography>
-                            <Box className="h-[85vh] px-5">
+                            <Box className=" px-5">
                                 <SearchUser />
                                 <UserChats />
                             </Box>
-                        </div>
                     </Card>
                 </Grid>
                 {/* {Right Sidebar} */}
-                <Grid size={9} >
+                <Grid size={{xs:12, md:8, lg:9}} >
                     {selectedChatID ? (
-                    <div className="flex flex-col h-full space-y-3">
+                    <Box className="flex flex-col h-full space-y-3">
                         <Card variant="outlined" className=" flex justify-between items-center border-l p-5 ">
                             <div className="flex items-center space-x-3">
                                 <Avatar />
@@ -98,7 +107,7 @@ const Message = () => {
                             </div>
                         </div>
                         </Card>
-                    </div>                    ) : (
+                    </Box>                    ) : (
                         <Card className=" flex flex-col  justify-center items-center bg-red-400 h-[85vh]">
                         <Typography variant="body1" className="text-center mb-20 flex">Select a chat to start messaging</Typography>
                         <Box className="flex justify-center items-center mt-4">

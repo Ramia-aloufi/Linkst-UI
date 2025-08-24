@@ -15,21 +15,23 @@ const Reels = () => {
   }, [dispatch]);
 
   return (
-    <Box className="h-[90vh] w-full flex items-center justify-center bg-black">
+    <Box className="h-[90vh]  w-full flex items-center justify-center " sx={{ backgroundColor: (theme) => theme.palette.mode === 'light' ? '#d7d7d7' : '#121212' }}>
       <Box
         sx={{
-          height: "90vh",
+          height: "80vh",
           width: "400px",
           overflowY: "scroll",
           scrollSnapType: "y mandatory",
           backgroundColor: "black",
+          borderRadius: 2,
         }}
+        className="hideScrollBar"
       >
         {reels.map((reel) => (
           <Box
             key={reel.id}
             sx={{
-              height: "90vh",
+              height: "80vh",
               position: "relative",
               scrollSnapAlign: "start",
             }}
@@ -64,29 +66,28 @@ const Reels = () => {
             <Box
               sx={{
                 position: "absolute",
-                bottom: 40,
+                bottom: 20,
                 left: 16,
                 color: "white",
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box className="flex items-center ">
                 <Avatar
-                  src={"https://i.pravatar.cc/100"}
+                  src={reel.user.profile?.profilePictureUrl || `https://ui-avatars.com/api/?name=${reel.user.firstName}+${reel.user.lastName}`}
                   alt={`${reel.user.firstName} ${reel.user.lastName}`}
+                  sx={{border: "2px solid white"}}
                 />
-                <Box className="">
+                <Box className="ml-2">
                 <Typography variant="subtitle1" fontWeight="bold">
-                  @{reel.user.firstName} {reel.user.lastName}
+                  {reel.user.firstName} {reel.user.lastName}
                 </Typography>
-                <Typography variant="body2" color="gray">
-                  {/* {reel} */}
-                </Typography>
+            <Typography variant="body2" >
+              {reel.title}
+            </Typography>
               </Box>
             </Box>
             {/* Title */}
-            <Typography variant="body2" textAlign="center" color="white" marginTop={1}>
-              {reel.title}
-            </Typography>
+
 
             </Box>
 

@@ -10,7 +10,7 @@ import { CreateChat } from "../../redux/message/MessageService"
 const SearchUser = () => {
 
 
-  const { users } = useSelector((state: RootState) => state.user)
+  const { searchUsers } = useSelector((state: RootState) => state.user)
   const dispatch = useDispatch<AppDispatch>()
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 700);
@@ -31,7 +31,7 @@ const SearchUser = () => {
     <div className=" relative  w-full">
       <TextField onChange={(e) => setQuery(e.target.value)} fullWidth placeholder="search user..." />
       <Card className="mt-2 absolute z-10  w-full px-5 space-y-3 overflow-y-scroll max-h-60 rounded ">
-        {users && users.map((user) => (
+        {searchUsers && searchUsers.map((user) => (
           <MenuList>
             <MenuItem key={user.id} className="flex items-center justify-between cursor-pointer hover:bg-gray-200"
             onClick={() => handleStartChat(user.id)}>

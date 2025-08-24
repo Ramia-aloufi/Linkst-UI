@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import type { AppDispatch } from "../../redux/Store";
-import { useDispatch } from "react-redux";
+import type { AppDispatch, RootState } from "../../redux/Store";
+import { useDispatch, useSelector } from "react-redux";
 import { createStory } from "../../redux/story/StoryService";
 
 type Props = {
@@ -12,11 +12,12 @@ type Props = {
   onClose: () => void;
 };
 
-const StoryModal = ({ open, onClose }: Props) => {
+const AddStoryModal = ({ open, onClose }: Props) => {
+  const { loading, error } = useSelector((state: RootState) => state.story);
   const dispatch = useDispatch<AppDispatch>();
   const StorySchema = z.object({
     caption: z.string().min(2).max(100),
-    media: z.instanceof(FileList),
+    media: z.instanceof(FileList).refine((files) => files.length === 1, "Media is required"),
   });
 
   type StorySchemaType = z.infer<typeof StorySchema>;
@@ -25,6 +26,7 @@ const StoryModal = ({ open, onClose }: Props) => {
     register,
     reset,
     handleSubmit,
+    watch,
     formState: { isDirty, isValid },
   } = useForm<StorySchemaType>({
     resolver: zodResolver(StorySchema),
@@ -50,6 +52,11 @@ const StoryModal = ({ open, onClose }: Props) => {
     <Modal open={open} onClose={onClose}>
       <div className="flex justify-center items-center h-screen">
         <Box sx={{ width: 400, bgcolor: "background.paper", p: 4, borderRadius: 2 }}>
+          {error && (
+            <Typography color="error" variant="body2" gutterBottom>
+              {error.error}
+            </Typography>
+          )}
           <Typography variant="h6" component="h2" gutterBottom>
             Create Story
           </Typography>
@@ -68,10 +75,29 @@ const StoryModal = ({ open, onClose }: Props) => {
               Upload
               <input hidden type="file" accept="image/*,video/*" {...register("media")} />
             </Button>
+            {watch("media") && watch("media")[0] && (
+              watch("media")[0]?.type.startsWith("image/") ? (
+                <img
+                  src={URL.createObjectURL(watch("media")[0])}
+                  alt="Preview"
+                  className="mt-2 max-h-40 object-cover"
+                />
+              ) : (
+                <video
+                  src={URL.createObjectURL(watch("media")[0])}
+                  controls
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    borderRadius: 2,
+                  }}
+                />
+              )
+            )}
 
             <div className="flex gap-3">
-              <Button disabled={!isDirty || !isValid} variant="contained" type="submit">
-                Submit
+              <Button disabled={!isDirty || !isValid } variant="contained" type="submit">
+                {!loading ? "Submitting..." : "Submit"}
               </Button>
               <Button variant="outlined" onClick={close}>
                 Cancel
@@ -84,4 +110,4 @@ const StoryModal = ({ open, onClose }: Props) => {
   );
 };
 
-export default StoryModal;
+export default AddStoryModal;

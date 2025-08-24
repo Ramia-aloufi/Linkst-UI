@@ -10,29 +10,33 @@ type StoriesProps = {
 const Stories = ({ user }: StoriesProps) => {
 
   const [open, setOpen] = useState(false);
+  const toggleModal = () => {
+    setOpen((prev) => !prev);
+  };
+
   return (
-    <div className='flex items-center justify-center flex-col cursor-pointer space-y-2' onClick={() => setOpen(true)}>
+    <div className='flex items-center justify-center flex-col cursor-pointer space-y-2' onClick={toggleModal}>
       <Box
         sx={{
           borderRadius: "50%",
-          padding: "3px",
+          padding: "4px",
           background: "linear-gradient(45deg, #7E68CA, #B4CA68)",
         }}
       >
         <Box
           component="img"
-          src={user.profilePictureUrl || ""}
+          src={user.profilePictureUrl || `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}`}
           sx={{
-            width: 100,
-            height: 100,
+            width: 80,
+            height: 80,
             borderRadius: '50%',
             backgroundColor: (theme) => theme.palette.background.paper,
-            padding: "16px",
+            padding: "8px",
           }}
         /></Box>
         <Typography variant="body2" >{user.firstName + " " + user.lastName}</Typography>
         {open && (
-          <StoryModal userStory={user} open={open} onClose={() => setOpen(false)} />
+          <StoryModal userStory={user} open={open} onClose={toggleModal} />
         )}
     </div>
   )

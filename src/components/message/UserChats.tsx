@@ -3,17 +3,19 @@ import { type AppDispatch, type RootState } from "../../redux/Store"
 import UserChatCard from "./UserChatCard";
 import type { UUID } from "crypto";
 import { getallMessages } from "../../redux/message/MessageService";
-import { selectChat } from "../../redux/message/MessageSlice";
+import { selectChat,userReceiver } from "../../redux/message/MessageSlice";
 
 
 const UserChats = () => {
     const { chat } = useSelector((state: RootState) => state.message);
     const dispatch = useDispatch<AppDispatch>()
 
-    const onMessaging = (chatId: UUID) => {
+    const onMessaging = (chatId: UUID,userID:UUID) => {
         dispatch(selectChat(chatId))
+        dispatch(userReceiver(userID))
         dispatch(getallMessages(chatId))
     }
+
 
     if (!chat || chat.length === 0) {
         return <span>Start chatting</span>;
@@ -22,7 +24,7 @@ const UserChats = () => {
     return (
         <div className="space-y-3 ">
             {chat.map((chatUsers) =>
-                <UserChatCard key={chatUsers.id} user={chatUsers.users[0]} message={null} onClick={() => onMessaging(chatUsers.id)} />
+                <UserChatCard key={chatUsers.id} user={chatUsers.users[0]} message={null} onClick={() => onMessaging(chatUsers.id, chatUsers.users[0].id)} />
             )}
         </div>
     );

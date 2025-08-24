@@ -12,12 +12,14 @@ type postInitialState = {
     loading: boolean
     error: ApiError | null
     selectedChatID:UUID | null
+    chatWithUserID: UUID | null
 }
 
 const initialState: postInitialState = {
     chat: [],
     messages: [],
     selectedChatID:null,
+    chatWithUserID: null,
     message: null,
     loading: false,
     error: null
@@ -30,11 +32,12 @@ const MessageSlice = createSlice({
         selectChat:(state,action:PayloadAction<UUID>)=>{
             state.selectedChatID = action.payload
         },
-        addNewMessage:(state,action:PayloadAction<Message>)=>{            
-     const exists = state.messages.some(m => m === action.payload);
-  if (!exists) {
-    state.messages.push(action.payload);
-  }
+        userReceiver:(state,action:PayloadAction<UUID>)=>{
+            state.chatWithUserID = action.payload
+        },
+        addNewMessage:(state,action:PayloadAction<Message>)=>{   
+           state.messages.push(action.payload);
+
         }
     },
     extraReducers: (builder) => {
@@ -76,4 +79,4 @@ const MessageSlice = createSlice({
 
 
 export const MessageReducer = MessageSlice.reducer
-export const {selectChat,addNewMessage} = MessageSlice.actions
+export const {selectChat,addNewMessage,userReceiver} = MessageSlice.actions

@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { getPosts } from "../../redux/post/PostService";
 import RightBar from "./Rightbar";
-import StoryModal from "../story/StoryModal";
+import AddStoryModal from "../story/AddStoryModal";
 
 
 
@@ -34,6 +34,7 @@ const Home = () => {
     };
 
     const toggleStoryModal = () => {
+        
         setOpenStoryModal((prev) => !prev);
     };
 
@@ -66,9 +67,9 @@ const Home = () => {
 
     return (
         <Grid container spacing={12} >
-            <Grid size={8} className="hideScrollBar space-y-5 overflow-y-scroll h-screen" >
-                <Card className="flex items-center justify-evenly p-4 bg-gray-200">
-                    <div className="flex items-center justify-center flex-col cursor-pointer space-y-2" onClick={toggleStoryModal}>
+            <Grid size={{ sm: 12, lg: 8 }} className="hideScrollBar space-y-5 overflow-y-scroll h-screen" >
+                <Card className="flex items-center justify-evenly p-4 bg-gray-200 min-w-[10px] overflow-x-scroll">
+                    <div className="flex items-center justify-center flex-col cursor-pointer space-y-2 " onClick={toggleStoryModal}>
                         <Avatar sx={{ width: 70, height: 70 }} >
                             <AddIcon sx={{ width: 40, height: 40 }} />
                         </Avatar>
@@ -129,11 +130,11 @@ const Home = () => {
                 {loading && <CircularProgress />}
                 <div>
                     <CreatePostModal open={openCreateModal} onClose={toggleModal} />
-                    <StoryModal open={openStoryModal} onClose={toggleStoryModal} />
+                    <AddStoryModal open={openStoryModal} onClose={toggleStoryModal} />
                 </div>
             </Grid>
             {/* Right Sidebar */}
-            <Grid size={4}>
+            <Grid size={{ sm: 0, lg: 4 }}>
                 <RightBar />
             </Grid>
         </Grid>
