@@ -94,7 +94,7 @@ const img = me?.profile?.profilePictureUrl || "https://www.w3schools.com/howto/i
       >
         <Box
           className="flex items-center space-x-2 cursor-pointer"
-          onClick={() => navigate("/profile")}
+          onClick={() => navigate(`/profile/${me?.fullName}`)}
         >
           <Avatar sx={{ width: 40, height: 40 }}>
             <img src={img} alt="Profile" />

@@ -1,5 +1,4 @@
 import { Card, CardHeader, Avatar, IconButton, CardMedia, CardContent, Typography, CardActions, TextField, Button } from "@mui/material"
-import { red } from "@mui/material/colors"
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import type { Post } from "../../model/Post";
@@ -13,14 +12,17 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { createComments, getComments } from "../../redux/comment/CommentService";
 import { likePost } from "../../redux/post/PostService";
+import { useNavigate } from "react-router-dom";
+
 const CommentSchema = z.object({
   content: z.string().min(2).max(200),
 });
 
-type input = z.infer<typeof CommentSchema>;
-const PostCard = ({ post }: { post: Post }) => {  
+  type input = z.infer<typeof CommentSchema>;
+const PostCard = ({ post }: { post: Post }) => {
   const { comments } = useSelector((state: RootState) => state.comment);
   const dispatch = useDispatch<AppDispatch>();
+  const nav = useNavigate();
   const { register, handleSubmit, reset } = useForm<input>({
     resolver: zodResolver(CommentSchema)
   });
@@ -28,22 +30,21 @@ const PostCard = ({ post }: { post: Post }) => {
   const [openComments, setOpenComments] = useState(false);
 
   const handleLike = () => {
-    console.log("Liked");
     dispatch(likePost(post.id));
   };
   const handleCommentOpen = () => {
     setOpenComments(!openComments);
     dispatch(getComments(post.id));
-    reset();
+    
   };
 
   const handleCommentSubmit = (data: input) => {
     dispatch(createComments({ postId: post.id, comment: data.content }));
-    console.log(data);
+    reset();
   };
 
   return (
-    <Card>
+    <Card >
       <CardHeader
         avatar={
           post.user.profilePictureUrl ? (
@@ -54,7 +55,13 @@ const PostCard = ({ post }: { post: Post }) => {
             </Avatar>
           )}
         action={
-          <IconButton>
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              navigator.clipboard.writeText(window.location.href);
+              alert("Post link copied to clipboard!");
+            }}
+          >
             <ShareIcon />
           </IconButton>
 
@@ -63,18 +70,18 @@ const PostCard = ({ post }: { post: Post }) => {
         subheader={new Date(post.createdAt).toLocaleDateString()}
       />
       <CardContent>
-        <Typography variant="body2"  style={{ whiteSpace: 'pre-line' }}>
+        <Typography variant="body2" style={{ whiteSpace: 'pre-line' }}>
           {post.content}
         </Typography>
       </CardContent>
       {post.media && post.media.length > 0 &&
-      <CardMedia
-        component="img"
-        image={post.media}
-        alt={post.caption}
-        sx={{ height: 300 }}
-      />
-}
+        <CardMedia
+          component="img"
+          image={post.media}
+          alt={post.caption}
+          sx={{ height: 300 }}
+        />
+      }
       <CardActions disableSpacing>
         <IconButton onClick={handleLike}>
           {post.likedByCurrentUser ? (
@@ -133,15 +140,14 @@ const PostCard = ({ post }: { post: Post }) => {
             <div className="space-y-2 ">
               {comments.map((comment, index) => (
                 <div className="flex items-center" key={index}>
-                  <div className="flex items-center">
+                  <div className="flex items-center space-x-2 cursor-pointer" onClick={()=> nav(`/profile/${comment.user.fullName}`)}>
                     {/* Display user avatar and name */}
-                    <Avatar sx={{ bgcolor: red[500], width: 32, height: 32, marginRight: 1 }}>
+                    <Avatar src={comment.user.profile?.profilePictureUrl || `https://ui-avatars.com/api/?name=${comment.user.fullName.charAt(0)}${comment.user.fullName.charAt(1)}`}>
                       {comment.user.fullName.charAt(0)}{comment.user.fullName.charAt(1)}
                     </Avatar>
                     <strong>{comment.user.fullName}:</strong>
                   </div>
                   <Typography variant="body2" sx={{ marginLeft: 3 }}>
-
                     {comment.comment}
                   </Typography>
                 </div>

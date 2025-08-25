@@ -4,10 +4,10 @@ export type Reel = {
     id: number;
     videoUrl: string;
     title: string;
+    createdAt:Date
     user: {
         id: number;
-        firstName: string;
-        lastName: string;
+        fullName: string;
         profile?: Profile;
     };
 };

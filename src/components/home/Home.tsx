@@ -12,6 +12,7 @@ import type { AppDispatch, RootState } from "../../redux/Store";
 import { getPosts } from "../../redux/post/PostService";
 import RightBar from "./Rightbar";
 import AddStoryModal from "../story/AddStoryModal";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -23,6 +24,7 @@ const Home = () => {
     // const { stories } = useSelector((state: RootState) => state.story);
 
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const [openCreateModal, setOpenCreateModal] = useState(false);
     const [openStoryModal, setOpenStoryModal] = useState(false);
 
@@ -119,7 +121,7 @@ const Home = () => {
                         const isLastPost = index === posts.length - 1;
 
                         return (
-                            <div key={index} ref={isLastPost ? lastPostRef : null}>
+                            <div key={index} onClick={() => navigate(`/post/${post.id}`)} ref={isLastPost ? lastPostRef : null}>
                                 <PostCard post={post} />
                             </div>
 

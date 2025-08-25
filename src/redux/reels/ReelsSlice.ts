@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { Reel } from "../../model/Reels";
-import { CreateReel, GetAllReels } from "./ReelsService";
+import { CreateReel, GetAllReels, getUserReels } from "./ReelsService";
 
 
 type ReelsState = {
     reels: Reel[];
+    userReels:Reel[]
     loading: boolean;
     error: string | null;
 };
@@ -12,6 +13,7 @@ type ReelsState = {
 
 const initialState: ReelsState = {
     reels: [],
+    userReels:[],
     loading: false,
     error: null,
 };
@@ -30,6 +32,10 @@ const ReelsSlice = createSlice({
             .addCase(GetAllReels.fulfilled, (state, action) => {
                 state.loading = false;
                 state.reels = action.payload;
+            })
+            .addCase(getUserReels.fulfilled,(state,action)=>{
+                state.userReels = action.payload
+
             })
             .addCase(GetAllReels.rejected, (state, action) => {
                 state.loading = false;

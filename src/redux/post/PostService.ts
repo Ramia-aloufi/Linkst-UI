@@ -4,6 +4,7 @@ import api from "../../config/Api";
 import type { ApiError } from "../../model/ApiError";
 import type { Post } from "../../model/Post";
 import type { PaginateResponse } from "../../model/PaginateResponse";
+import type { UUID } from "crypto";
 
 export const getPosts = createAsyncThunk<PaginateResponse<Post[]>, number, { rejectValue: ApiError }>(
     'post/getPosts',
@@ -95,6 +96,22 @@ export const getPostByUserId = createAsyncThunk<Post[],void, { rejectValue: ApiE
     async (_, { rejectWithValue }) => {
         try {
             const { data } = await api.get<Post[]>(`post/user`);
+            return data;
+        } catch (err) {
+            const error = err as AxiosError<ApiError>;
+            const apiError = error.response?.data ?? {
+                message: 'Unexpected error',
+                error: 'Unknown error',
+            };
+            return rejectWithValue(apiError);
+        }
+    }
+);
+export const getPostById = createAsyncThunk<Post, UUID, { rejectValue: ApiError }>(
+    'post/getPostById',
+    async (postId, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get<Post>(`post/${postId}`);
             return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;

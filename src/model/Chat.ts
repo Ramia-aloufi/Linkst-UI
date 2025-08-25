@@ -1,8 +1,17 @@
 import type { UUID } from "crypto"
-import type { User } from "./User"
+import type { Profile } from "./Profile"
 
 export type Chat = {
     id:UUID 
-    users:User[]
+    users:UserChat[]
 
 }
+
+export type UserChat=
+    {
+            id: UUID;
+            firstName: string;
+            lastName: string;
+            profile?: Profile;
+            fullName:string
+        };

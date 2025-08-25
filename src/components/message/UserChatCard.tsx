@@ -1,9 +1,9 @@
 import { Card, CardHeader, Avatar, IconButton } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import type { User } from "../../model/User";
+import type { UserChat } from "../../model/Chat";
 
 type Props = {
-  user: User;
+  user: UserChat;
   message: string | null;
   onClick?: () => void;
 };

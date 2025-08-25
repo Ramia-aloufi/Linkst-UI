@@ -4,4 +4,7 @@ export type PostComment = {
   user: {
     id: string;
     fullName: string;
+    profile:{
+      profilePictureUrl:string|null;
+    }
   }};

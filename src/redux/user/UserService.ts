@@ -4,6 +4,7 @@ import type { ApiError } from "../../model/ApiError";
 import api from "../../config/Api";
 import type { AxiosError } from "axios";
 import type { UserStory } from "../../model/UsersStory";
+import type { UUID } from "crypto";
 
 export const searchUser = createAsyncThunk<User[], string,{ rejectValue: ApiError }>("user/search", async (query, { rejectWithValue }) => {
     try {
@@ -69,3 +70,49 @@ export const getUsersStory = createAsyncThunk<UserStory[], void, { rejectValue: 
         }
     }
 );
+export const updateUser = createAsyncThunk<UserInfo, FormData, { rejectValue: ApiError }>(
+    "user/update",
+    async (userData, { rejectWithValue }) => {
+        try {
+            const { data } = await api.put("user", userData);
+            return data;
+        } catch (err) {
+            const error = err as AxiosError<ApiError>;
+            const apiError = error.response?.data ?? {
+                message: 'Unexpected error',
+                error: 'Unknown error',
+            };
+            return rejectWithValue(apiError);
+        }
+    }
+);
+export const getUserByFullName = createAsyncThunk<UserInfo, string, { rejectValue: ApiError }>(
+    "user/getByFullName",
+    async (fullName, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get(`user/fullname/${encodeURIComponent(fullName)}`);
+            return data;
+        } catch (err) {
+            const error = err as AxiosError<ApiError>;
+            const apiError = error.response?.data ?? {
+                message: 'Unexpected error',
+                error: 'Unknown error',
+            };
+            return rejectWithValue(apiError);
+        }
+    }
+);
+export const followUser  = createAsyncThunk<UserInfo,UUID,{rejectValue:ApiError}>("user/follow",async(userID,{rejectWithValue})=>{
+    try {
+        const {data} = await api.put(`user/follow/${userID}`)
+        return data
+        
+        } catch (err) {
+            const error = err as AxiosError<ApiError>;
+            const apiError = error.response?.data ?? {
+                message: 'Unexpected error',
+                error: 'Unknown error',
+            };
+            return rejectWithValue(apiError);
+        }
+})

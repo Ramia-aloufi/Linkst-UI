@@ -3,8 +3,9 @@ import type { Reel } from "../../model/Reels";
 import type { ApiError } from "../../model/ApiError";
 import api from "../../config/Api";
 import type { AxiosError } from "axios";
+import type { UUID } from "crypto";
 
-export const GetAllReels = createAsyncThunk<Reel[],void, { rejectValue: ApiError }>(
+export const GetAllReels = createAsyncThunk<Reel[], void, { rejectValue: ApiError }>(
     'reels/getAll',
     async (_, { rejectWithValue }) => {
         try {
@@ -40,3 +41,18 @@ export const CreateReel = createAsyncThunk<void, FormData, { rejectValue: ApiErr
         }
     }
 );
+export const getUserReels = createAsyncThunk<Reel[], UUID, { rejectValue: ApiError }>("reels/user", async (userId, { rejectWithValue }) => {
+    try {
+        const { data } = await api.get(`reels/user/${userId}`);
+        return data;
+
+    } catch (err) {
+        const error = err as AxiosError<ApiError>;
+        const apiError = error.response?.data ?? {
+            message: 'Unexpected error',
+            error: 'Unknown error',
+        };
+        return rejectWithValue(apiError);
+    }
+
+})

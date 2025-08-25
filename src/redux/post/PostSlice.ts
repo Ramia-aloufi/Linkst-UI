@@ -1,6 +1,6 @@
 import { createSlice, isRejectedWithValue } from "@reduxjs/toolkit";
 import type { Post } from "../../model/Post";
-import { createPost, getPostByUserId, getPosts, likePost } from "./PostService";
+import { createPost, getPostById, getPostByUserId, getPosts, likePost } from "./PostService";
 import type { ApiError } from "../../model/ApiError";
 
 type PostInitialState = {
@@ -15,6 +15,7 @@ type PostInitialState = {
     loading: boolean;
     error: ApiError | null;
     page: number
+    singlePost: Post | null;
 };
 
 const initialState: PostInitialState = {
@@ -29,6 +30,7 @@ const initialState: PostInitialState = {
     page: 0,
     loading: false,
     error: null,
+    singlePost: null
 };
 const PostSelector = createSlice({
     name: 'post',
@@ -60,7 +62,9 @@ const PostSelector = createSlice({
                 // state.hasPrevious = action.payload.hasPrevious;
                 // state.page = action.payload.currentPage + 1;
             })
-
+            .addCase(getPostById.fulfilled, (state, action) => {
+                state.singlePost = action.payload;
+            })
             .addMatcher(
                 (action) => action.type.endsWith('/pending'),
                 (state) => {

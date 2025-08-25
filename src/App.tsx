@@ -12,6 +12,7 @@ import { Community } from './pages/Community';
 
 import { ThemeProvider } from './context/ThemeContext';
 import NotFound from './pages/NotFound';
+import SinglePost from './pages/SinglePost';
 
 
 function App() {
@@ -25,7 +26,8 @@ function App() {
             <Route index element={<Home />} />
             <Route path="reels" element={<Reels />} />
             <Route path="community" element={<Community />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile/:fullName" element={<Profile />} />
+            <Route path="post/:postId" element={<SinglePost />} />
             <Route path="/messages" element={<Message />} />
           </Route>
           <Route path="/login" element={<Authentication />} />
