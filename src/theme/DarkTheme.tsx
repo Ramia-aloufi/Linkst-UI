@@ -15,7 +15,7 @@ export const DarkTheme = createTheme({
     },
     text: {
       primary: "#FFFFFF", // Main text
-      secondary: "#B4CA68", // Accent text (optional)
+      secondary: "#CCCCCC", // Accent text (optional)
     },
   },
   components: {

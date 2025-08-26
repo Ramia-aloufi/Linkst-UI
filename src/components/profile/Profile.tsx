@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, Tab, Tabs, Typography } from "@mui/material"
+import { Avatar, Box, Button, Card, CardActions, CardContent, Modal, Tab, Tabs, Typography } from "@mui/material"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/Store";
@@ -11,7 +11,8 @@ import img from "../../assets/header.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { followUser, getUserByFullName } from "../../redux/user/UserService";
 import { getUserReels } from "../../redux/reels/ReelsService";
-
+import LogoutIcon from '@mui/icons-material/Logout';
+import { logOut } from "../../redux/auth/AuthSlice";
 
 const tabs = [
   { value: "post", label: "Post" },
@@ -22,7 +23,7 @@ const Profile = () => {
   const { fullName } = useParams<{ fullName: string }>();
   const { me, user } = useSelector((state: RootState) => state.user);
   const [openProfileImg, setOpenProfileImg] = useState(false);
-  const {userReels} = useSelector((state:RootState)=>state.reels)
+  const { userReels } = useSelector((state: RootState) => state.reels)
 
   const dispatch = useDispatch<AppDispatch>();
   const navigator = useNavigate();
@@ -30,6 +31,7 @@ const Profile = () => {
   const [value, setValue] = useState('post');
   const [name, setName] = useState<"Profile" | "Header">("Profile");
   const [open, setOpen] = useState(false);
+  const [isLogOut,setIsLogOut] = useState(false);
 
   const isCurrentUser = me?.id === user?.id;
 
@@ -38,24 +40,27 @@ const Profile = () => {
     console.log(newValue);
     setValue(newValue);
   };
-  const handleFollow = ()=>{
-    if(user)
-    dispatch(followUser(user?.id))
+  const handleFollow = () => {
+    if (user)
+      dispatch(followUser(user?.id)).unwrap().then(() => {
+        if (fullName)
+          dispatch(getUserByFullName(fullName));
+      })
   }
 
 
   useEffect(() => {
-    if (fullName) 
+    if (fullName)
       dispatch(getUserByFullName(fullName));
-      dispatch(getPostByUserId());
+    dispatch(getPostByUserId());
   }, [dispatch, fullName]);
 
-  useEffect(()=>{
-      if(user){
+  useEffect(() => {
+    if (user) {
       dispatch(getUserReels(user.id))
-      }
-      
-  },[dispatch, user])
+    }
+
+  }, [dispatch, user])
 
 
   return (
@@ -76,7 +81,7 @@ const Profile = () => {
             </Box>
           }
         </div>
-        <div className="px-5 h-[5rem] mt-5 flex justify-between items-start relative">
+        <div className="px-5 h-[4rem] mt-5 flex justify-between items-start relative">
           <div className="relative ">
             {user?.profile ? user?.profile?.profilePictureUrl ? (
 
@@ -102,31 +107,34 @@ const Profile = () => {
           </div>
           {isCurrentUser ?
             <Button variant="outlined" onClick={() => setOpen(true)} > Edit Profile </Button>
-            : <Button variant="outlined" onClick={handleFollow} > {user?.followers.includes(me!.id)? "unfollow":"following"}</Button>}
+            :
+            <Button variant="outlined" onClick={handleFollow} > {me?.id && !user?.followers.includes(me.id) ? "following" : "unfollow"}</Button>}
         </div>
-        <div className="pl-7">
+        <div className="pl-7 mt-2">
           <div className="">
-            <Typography variant="h4" className="font-bold text-xl ">{user?.fullName}</Typography>
+            <Typography variant="h4" className="font-bold text-xl ">{user?.fullName}
+              {isCurrentUser && <Button variant="text" color="error" onClick={() => setIsLogOut(true)} > <LogoutIcon />  </Button>}
+            </Typography>
             <Typography variant="body1">@{user?.fullName}</Typography>
           </div>
           <div className="py-2">
-            <Typography variant="body2">{user?.profile ? user?.profile.bio : "No bio available"}</Typography>
+            <Typography variant="body1" color="textSecondary" lineHeight={1.6} className="max-w-[400px]">{user?.profile ? user?.profile.bio : "No bio available"}</Typography>
           </div>
-          <div className="flex gap-5 items-center py-7 ">
-            <span>{user?.posts.length} post</span>
-            <span>{user?.followers.length} followers</span>
-            <span>{user?.following.length} following</span>
+          <div className="flex gap-5 items-center py-4 ">
+            <Typography variant="body1" fontWeight={500}>{user?.posts.length} Post</Typography>
+            <Typography variant="body1" fontWeight={500}>{user?.followers.length} Followers</Typography>
+            <Typography variant="body1" fontWeight={500}>{user?.following.length} Following</Typography>
           </div>
         </div>
         <section>
           <Box sx={{ width: '100%', borderBottom: 1, borderColor: "divider" }}  >
             <Tabs
               value={value}
-              onChange={ handleChange}
+              onChange={handleChange}
             >
 
               {tabs.map((tab) => (
-                <Tab value={tab.value} label={tab.label} wrapped  />
+                <Tab value={tab.value} label={tab.label} wrapped />
               ))}
             </Tabs>
           </Box>
@@ -142,16 +150,16 @@ const Profile = () => {
               {userReels.map((reels) => (
                 <div className="" key={reels.id}  >
                   <div className="h-[300px]">
-                    <video src={reels.videoUrl} className="w-full h-[80%] object-cover" controls/>
+                    <video src={reels.videoUrl} className="w-full h-[80%] object-cover" controls />
                     <div className="p-2 flex flex-row gap-2 ">
                       <Avatar src={reels.user.profile?.profilePictureUrl}></Avatar>
                       <div className="">
-                  <Typography> {reels.title}</Typography>
-                  <Typography variant="caption">{new Date(reels.createdAt).toLocaleDateString()}</Typography>
+                        <Typography> {reels.title}</Typography>
+                        <Typography variant="caption">{new Date(reels.createdAt).toLocaleDateString()}</Typography>
+                      </div>
+                    </div>
                   </div>
-                  </div>
-                  </div>
-                  
+
                 </div>
               ))}
             </div>}
@@ -160,6 +168,26 @@ const Profile = () => {
       </div>
       {isCurrentUser && <ProfileModal open={open} handleClose={handleClose} />}
       {isCurrentUser && <ProfileImageUpdate name={name} open={openProfileImg} onClose={() => setOpenProfileImg(false)} />}
+      {isLogOut && 
+      <div className="">
+        <Modal open={isLogOut} onClose={()=>setIsLogOut(false)}>
+
+          <Card className="absolute top-[50%] right-[50%] -translate-x-[-50%] p-6">
+            <CardContent>
+              <Typography>Are you sure you want to logout</Typography>
+            </CardContent>
+            <CardActions>
+              <Button variant="contained" color="error" onClick={()=>{dispatch(logOut());setIsLogOut(false)}} >Log out</Button>
+              <Button variant="outlined" onClick={()=>setIsLogOut(false)}>cancel</Button>
+            </CardActions>
+          </Card>
+
+
+        </Modal>
+
+      </div>
+      
+      }
     </Card>
   )
 }
