@@ -1,5 +1,7 @@
+import type { UUID } from "crypto";
+
 export type PostComment = {
-  id: string;
+  id: UUID;
   comment: string;
   user: {
     id: string;

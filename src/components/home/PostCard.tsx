@@ -10,32 +10,34 @@ import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 import SendIcon from '@mui/icons-material/Send';
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/Store";
-import { createComments, getComments } from "../../redux/comment/CommentService";
+import { createComments, deleteComment, getComments } from "../../redux/comment/CommentService";
 import { likePost } from "../../redux/post/PostService";
 import { useNavigate } from "react-router-dom";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 const CommentSchema = z.object({
   content: z.string().min(2).max(200),
 });
 
-  type input = z.infer<typeof CommentSchema>;
+type input = z.infer<typeof CommentSchema>;
 const PostCard = ({ post }: { post: Post }) => {
   const { comments } = useSelector((state: RootState) => state.comment);
+  const { me } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const nav = useNavigate();
   const { register, handleSubmit, reset } = useForm<input>({
     resolver: zodResolver(CommentSchema)
-  });
+  });  
 
   const [openComments, setOpenComments] = useState(false);
 
   const handleLike = () => {
-    dispatch(likePost(post.id));
+    console.log("handleLike");
+    dispatch(likePost(post.id))
   };
   const handleCommentOpen = () => {
     setOpenComments(!openComments);
     dispatch(getComments(post.id));
-    
   };
 
   const handleCommentSubmit = (data: input) => {
@@ -83,7 +85,7 @@ const PostCard = ({ post }: { post: Post }) => {
         />
       }
       <CardActions disableSpacing>
-        <IconButton onClick={handleLike}>
+        <IconButton onClick={(e) => {e.preventDefault();handleLike()}}>
           {post.likedByCurrentUser ? (
             <FavoriteIcon color="error" />
           ) : (
@@ -138,9 +140,10 @@ const PostCard = ({ post }: { post: Post }) => {
           )}
           {comments.length > 0 && (
             <div className="space-y-2 ">
-              {comments.map((comment, index) => (
-                <div className="flex items-center" key={index}>
-                  <div className="flex items-center space-x-2 cursor-pointer" onClick={()=> nav(`/profile/${comment.user.fullName}`)}>
+              {comments.map((comment, index) => {
+                const isUser = comment.user.id == me?.id;
+                return <div className="flex items-center relative" key={index}>
+                  <div className="flex items-center space-x-2 cursor-pointer" onClick={() => nav(`/profile/${comment.user.fullName}`)}>
                     {/* Display user avatar and name */}
                     <Avatar src={comment.user.profile?.profilePictureUrl || `https://ui-avatars.com/api/?name=${comment.user.fullName.charAt(0)}${comment.user.fullName.charAt(1)}`}>
                       {comment.user.fullName.charAt(0)}{comment.user.fullName.charAt(1)}
@@ -150,8 +153,10 @@ const PostCard = ({ post }: { post: Post }) => {
                   <Typography variant="body2" sx={{ marginLeft: 3 }}>
                     {comment.comment}
                   </Typography>
+                  {isUser &&
+                    <DeleteOutlineIcon color="warning" className="absolute top-5 right-5 cursor-pointer" onClick={(e) => { e.stopPropagation(); dispatch(deleteComment(comment.id)).unwrap().then((data) => { dispatch(getComments(post.id)); alert(data) }) }} />}
                 </div>
-              ))}
+              })}
             </div>
           )}
         </CardContent>

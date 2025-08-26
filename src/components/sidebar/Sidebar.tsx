@@ -74,6 +74,7 @@ const img = me?.profile?.profilePictureUrl || "https://www.w3schools.com/howto/i
                 borderRadius: 1,
                 minWidth: "auto",
                 px: 3,
+                opacity: isActive ? 1 : 0.7
               }}
             >
               <ListItemIcon sx={{ minWidth: 32 }}>
@@ -133,18 +134,18 @@ const img = me?.profile?.profilePictureUrl || "https://www.w3schools.com/howto/i
 
             return (
               <MenuItem
-
                 key={item.name}
                 selected={isActive}
                 onClick={() => {
                   navigate(item.path);
                   handleCloseNavMenu();
                 }}
+                
               >
                 <ListItemIcon>
                   <Icon />
                 </ListItemIcon>
-                <ListItemText>{item.name}</ListItemText>
+                <ListItemText >{item.name}</ListItemText>
               </MenuItem>
             );
 

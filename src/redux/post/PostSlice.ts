@@ -65,6 +65,7 @@ const PostSelector = createSlice({
             .addCase(getPostById.fulfilled, (state, action) => {
                 state.singlePost = action.payload;
             })
+
             .addMatcher(
                 (action) => action.type.endsWith('/pending'),
                 (state) => {

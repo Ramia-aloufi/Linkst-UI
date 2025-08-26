@@ -62,7 +62,7 @@ const ProfileImageUpdate = ({ open, onClose, name }: ProfileImageUpdateProps) =>
                         setFile(files[0]);
                     }
                 }} />
-                <label htmlFor="Upload Profile Image" className="bg-gray-100 bg-opacity-5 p-2 rounded-md h-[100px] flex flex-col items-center justify-center">
+                <label  htmlFor="Upload Profile Image" className=" bg-gray-400 p-2 rounded-md h-[100px] flex flex-col items-center justify-center">
                     <AddPhotoAlternateIcon />
                     <Typography variant="body2" >Click to upload a new profile image</Typography>
                     {error && <Typography variant="body2" color="error">{error.message}</Typography>}

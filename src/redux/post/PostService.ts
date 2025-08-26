@@ -43,12 +43,12 @@ export const createPost = createAsyncThunk<Post, FormData, { rejectValue: ApiErr
         }
     }
 );
-export const deletePost = createAsyncThunk(
+export const deletePost = createAsyncThunk<Post, UUID, { rejectValue: ApiError }>(
     'post/deletePost',
     async (postId, { rejectWithValue }) => {
         try {
-            await api.delete(`posts/${postId}`);
-            return postId;
+           const {data} =  await api.delete(`post/delete/${postId}`);
+            return data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;
             const apiError = error.response?.data ?? {

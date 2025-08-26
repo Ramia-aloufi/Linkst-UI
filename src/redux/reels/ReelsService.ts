@@ -56,3 +56,19 @@ export const getUserReels = createAsyncThunk<Reel[], UUID, { rejectValue: ApiErr
     }
 
 })
+export const deleteReel = createAsyncThunk<string, UUID, { rejectValue: ApiError }>(
+    'reels/delete',
+    async (reelsId, { rejectWithValue }) => {
+        try {
+           const {data} =  await api.delete(`reels/delete/${reelsId}`);
+            return data;
+        } catch (err) {
+            const error = err as AxiosError<ApiError>;
+            const apiError = error.response?.data ?? {
+                message: 'Unexpected error',
+                error: 'Unknown error',
+            };
+            return rejectWithValue(apiError);
+        }
+    }
+);

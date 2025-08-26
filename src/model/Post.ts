@@ -1,3 +1,4 @@
+import type { UUID } from "crypto";
 
 
 export type CreatePost={
@@ -6,7 +7,7 @@ export type CreatePost={
     caption: string; 
 }
 export type Post = {
-    id: string;
+    id: UUID;
     content: string;
     media: string; 
     caption: string; 

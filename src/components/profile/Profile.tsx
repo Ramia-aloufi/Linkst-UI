@@ -3,17 +3,18 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { ProfileModal } from "./ProfileModal";
-import { getPostByUserId } from "../../redux/post/PostService";
+import { deletePost, getPostByUserId } from "../../redux/post/PostService";
 import ProfilePosts from "./ProfilePosts";
 import AddIcon from '@mui/icons-material/Add';
 import ProfileImageUpdate from "./profileImageUpdate";
 import img from "../../assets/header.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { followUser, getUserByFullName } from "../../redux/user/UserService";
-import { getUserReels } from "../../redux/reels/ReelsService";
+import { deleteReel, getUserReels } from "../../redux/reels/ReelsService";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { logOut } from "../../redux/auth/AuthSlice";
-
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import type { UUID } from "crypto";
 const tabs = [
   { value: "post", label: "Post" },
   { value: "reels", label: "Reels" }
@@ -31,7 +32,10 @@ const Profile = () => {
   const [value, setValue] = useState('post');
   const [name, setName] = useState<"Profile" | "Header">("Profile");
   const [open, setOpen] = useState(false);
-  const [isLogOut,setIsLogOut] = useState(false);
+  const [isAction, setIsAction] = useState(false);
+  const [actionType, setActionType] = useState<"Logout" | "Delete" | "Reels">("Logout");
+  const [id, setId] = useState<UUID | null>(null)
+
 
   const isCurrentUser = me?.id === user?.id;
 
@@ -46,6 +50,50 @@ const Profile = () => {
         if (fullName)
           dispatch(getUserByFullName(fullName));
       })
+  }
+
+  const handleActions = (type: "Logout" | "Delete" | "Reels") => {
+
+    if (type == "Logout") {
+      setActionType("Logout")
+      setIsAction(true)
+    } else if (type == "Delete") {
+      setActionType("Delete")
+      setIsAction(true)
+    } else if (type == "Reels") {
+      setActionType("Reels")
+      setIsAction(true)
+    }
+
+
+  }
+
+  const handleActionSubmit = () => {
+    if (actionType == "Logout") {
+      dispatch(logOut())
+    } else if (actionType == "Delete") {
+      if (id)
+        dispatch(deletePost(id)).unwrap().then((data)=>{
+        if (fullName)
+        dispatch(getUserByFullName(fullName));
+      alert(data)
+        })
+      setId(null)
+    } else {
+      if (id)
+        dispatch(deleteReel(id)).unwrap().then((data)=>{
+        if (fullName)
+        dispatch(getUserByFullName(fullName));
+      alert(data)
+      
+        })
+    }
+    setIsAction(false)
+
+  }
+  const handleCloseAction = () => {
+    setIsAction(false)
+    setId(null)
   }
 
 
@@ -113,7 +161,7 @@ const Profile = () => {
         <div className="pl-7 mt-2">
           <div className="">
             <Typography variant="h4" className="font-bold text-xl ">{user?.fullName}
-              {isCurrentUser && <Button variant="text" color="error" onClick={() => setIsLogOut(true)} > <LogoutIcon />  </Button>}
+              {isCurrentUser && <Button variant="text" color="error" onClick={() => handleActions("Logout")} > <LogoutIcon />  </Button>}
             </Typography>
             <Typography variant="body1">@{user?.fullName}</Typography>
           </div>
@@ -141,14 +189,17 @@ const Profile = () => {
           <div className="" >
             {value == "post" && <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 p-5">
               {user?.posts.map((post) => (
-                <div className="" key={post.id} onClick={() => navigator(`/post/${post.id}`)} >
+                <div className="relative" key={post.id} onClick={() => navigator(`/post/${post.id}`)} >
+                  <DeleteOutlineIcon color="warning" className="absolute top-5 right-5 cursor-pointer" onClick={(e) => { e.stopPropagation(); setId(post.id); handleActions("Delete") }} />
                   <ProfilePosts key={post.id} post={post} />
                 </div>
               ))}
             </div>}
             {value == "reels" && <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 p-5">
               {userReels.map((reels) => (
-                <div className="" key={reels.id}  >
+                <div className="relative" key={reels.id}  >
+                  <DeleteOutlineIcon color="warning" className="absolute top-5 right-5 cursor-pointer" onClick={(e) => { e.stopPropagation(); setId(reels.id); handleActions("Reels") }} />
+
                   <div className="h-[300px]">
                     <video src={reels.videoUrl} className="w-full h-[80%] object-cover" controls />
                     <div className="p-2 flex flex-row gap-2 ">
@@ -168,25 +219,25 @@ const Profile = () => {
       </div>
       {isCurrentUser && <ProfileModal open={open} handleClose={handleClose} />}
       {isCurrentUser && <ProfileImageUpdate name={name} open={openProfileImg} onClose={() => setOpenProfileImg(false)} />}
-      {isLogOut && 
-      <div className="">
-        <Modal open={isLogOut} onClose={()=>setIsLogOut(false)}>
+      {isAction &&
+        <div className="">
+          <Modal open={isAction} onClose={handleCloseAction}>
 
-          <Card className="absolute top-[50%] right-[50%] -translate-x-[-50%] p-6">
-            <CardContent>
-              <Typography>Are you sure you want to logout</Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" color="error" onClick={()=>{dispatch(logOut());setIsLogOut(false)}} >Log out</Button>
-              <Button variant="outlined" onClick={()=>setIsLogOut(false)}>cancel</Button>
-            </CardActions>
-          </Card>
+            <Card className="absolute top-[50%] right-[50%] -translate-x-[-50%] p-6">
+              <CardContent>
+                <Typography>Are you sure you want to {actionType == "Logout" ? "Logout" : "Delete"}</Typography>
+              </CardContent>
+              <CardActions>
+                <Button variant="contained" color="error" onClick={() => { handleActionSubmit() }} >{actionType == "Logout" ? "Logout" : "Delete"}</Button>
+                <Button variant="outlined" onClick={handleCloseAction}>cancel</Button>
+              </CardActions>
+            </Card>
 
 
-        </Modal>
+          </Modal>
 
-      </div>
-      
+        </div>
+
       }
     </Card>
   )
