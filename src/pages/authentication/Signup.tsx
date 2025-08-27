@@ -43,11 +43,11 @@ const Signup = () => {
     });
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
+        console.log(data);
         dispatch(SignupUser(data)).unwrap().then(() => {
             navigate("/");
-      dispatch(getMe());
+            dispatch(getMe());
             dispatch(getPosts(0));
-
         });
     };
 
@@ -57,7 +57,6 @@ const Signup = () => {
                 label="First Name"
                 type="text"
                 sx={{ width: 350 }}
-
                 autoComplete="off"
                 error={!!errors.firstName}
                 helperText={errors.firstName?.message}
@@ -67,7 +66,6 @@ const Signup = () => {
                 label="Last Name"
                 type="text"
                 sx={{ width: 350 }}
-
                 autoComplete="off"
                 error={!!errors.lastName}
                 helperText={errors.lastName?.message}
@@ -77,7 +75,6 @@ const Signup = () => {
                 label="Email"
                 type="email"
                 sx={{ width: 350 }}
-
                 autoComplete="off"
                 error={!!errors.email}
                 helperText={errors.email?.message}
@@ -87,13 +84,14 @@ const Signup = () => {
                 label="Password"
                 type="password"
                 sx={{ width: 350 }}
-
                 autoComplete="off"
                 error={!!errors.password}
                 helperText={errors.password?.message}
                 {...register("password")}
             />
-            <RadioGroup row   {...register("gender")}
+            <RadioGroup
+                row
+                {...register("gender")}
                 sx={{
                     '& .MuiFormControlLabel-label': { fontSize: '0.85rem' }, // smaller text
                     '& .MuiFormControlLabel-root': { marginRight: 1 } // reduce spacing

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../redux/Store";
 import { updateProfile } from "../../redux/profile/ProfileService";
+import { getMe } from "../../redux/user/UserService";
 type ProfileImageUpdateProps = {
     open: boolean;
     onClose: () => void;
@@ -23,27 +24,31 @@ const style = {
     borderRadius: '10px',
 };
 const ProfileImageUpdate = ({ open, onClose, name }: ProfileImageUpdateProps) => {
-    const { loading, error, userProfile } = useSelector((state: RootState) => state.profile);
+    const {me ,error,loading} = useSelector((state: RootState) => state.user);
     const [file, setFile] = useState<File | null>(null);
     const dispatch = useDispatch<AppDispatch>();
 
     const onSave = () => {
         if (file) {
             const formData = new FormData();
-            formData.append("id", userProfile?.id || "");
+            formData.append("id", me?.profile.id || "");
 
             if (name === "Profile") {
                 formData.append("profilePictureUrl", file);
-                dispatch(updateProfile(formData))
+                dispatch(updateProfile(formData)).unwrap().then(() => {
+                    onClose();
+                    setFile(null);
+                    dispatch(getMe());
+                });
             }
             if (name === "Header") {
                 formData.append("headerImageUrl", file);
-                dispatch(updateProfile(formData))
+                dispatch(updateProfile(formData)).unwrap().then(() => {
+                    onClose();
+                    setFile(null);
+                    dispatch(getMe());
+                });
             }
-        }
-        if (!error && !loading) {
-            onClose();
-            setFile(null);
         }
     }
     const handleClose = () => {
@@ -74,7 +79,7 @@ const ProfileImageUpdate = ({ open, onClose, name }: ProfileImageUpdateProps) =>
                 )}
                 <div className="flex gap-3">
                     <Button variant="contained" color="primary" onClick={onSave}>
-                        Save
+                        {loading ? "Saving..." : "Save"}
                     </Button>
                     <Button variant="outlined" onClick={handleClose}>
                         Cancel

@@ -48,13 +48,13 @@ const PostSelector = createSlice({
             .addCase(createPost.fulfilled, (state, action) => {
                 state.posts.push(action.payload);
             })
-            .addCase(likePost.fulfilled, (state, action) => {
-                const index = state.posts.findIndex(post => post.id === action.payload.id);
-                if (index !== -1) {
-                    state.posts[index].likedByCurrentUser = action.payload.likedByCurrentUser;
-                    state.posts[index].likeCount = action.payload.likeCount;
-                }
-            })
+            // .addCase(likePost.fulfilled, (state, action) => {
+            //     const index = state.posts.findIndex(post => post.id === action.payload.id);
+            //     if (index !== -1) {
+            //         state.posts[index].likedByCurrentUser = action.payload.likedByCurrentUser;
+            //         state.posts[index].likeCount = action.payload.likeCount;
+            //     }
+            // })
             .addCase(getPostByUserId.fulfilled, (state, action) => {
                 state.userPosts = action.payload;
                 // state.currentPage = action.payload.currentPage;
@@ -65,7 +65,19 @@ const PostSelector = createSlice({
             .addCase(getPostById.fulfilled, (state, action) => {
                 state.singlePost = action.payload;
             })
-
+            .addCase(likePost.fulfilled, (state, action) => {
+                if (state.singlePost?.id === action.payload.id) {
+                    state.singlePost.likedByCurrentUser = action.payload.likedByCurrentUser;
+                    state.singlePost.likeCount = action.payload.likeCount;
+                }
+                if (state.userPosts.length > 0) {
+                    const index = state.userPosts.findIndex(post => post.id === action.payload.id);
+                    if (index !== -1) {
+                        state.userPosts[index].likedByCurrentUser = action.payload.likedByCurrentUser;
+                        state.userPosts[index].likeCount = action.payload.likeCount;
+                    }
+                }
+            })
             .addMatcher(
                 (action) => action.type.endsWith('/pending'),
                 (state) => {

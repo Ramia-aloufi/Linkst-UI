@@ -25,6 +25,7 @@ export const GetUserProfile = createAsyncThunk<Profile, void, { rejectValue: Api
 export const updateProfile = createAsyncThunk<Profile, FormData, { rejectValue: ApiError }>(
     'profile/updateProfile',
     async (userData: FormData, { rejectWithValue }) => {
+        console.log(userData.get("id"));
         try {
             const { data } = await api.put(`profile/${userData.get("id")}`, userData);
             return data;
