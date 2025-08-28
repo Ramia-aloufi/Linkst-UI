@@ -116,3 +116,19 @@ export const followUser  = createAsyncThunk<UserInfo,UUID,{rejectValue:ApiError}
             return rejectWithValue(apiError);
         }
 })
+export const getSomeUsers = createAsyncThunk<UserInfo[], void, { rejectValue: ApiError }>(
+    "user/getSomeUsers",
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get("user/search?query=");
+            return data;
+        } catch (err) {
+            const error = err as AxiosError<ApiError>;
+            const apiError = error.response?.data ?? {
+                message: 'Unexpected error',
+                error: 'Unknown error',
+            };
+            return rejectWithValue(apiError);
+        }
+    }
+);

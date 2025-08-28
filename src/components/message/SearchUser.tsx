@@ -29,7 +29,8 @@ const SearchUser = () => {
 
   return (
     <div className=" relative  w-full">
-      <TextField onChange={(e) => setQuery(e.target.value)} fullWidth placeholder="search user..." />
+      <TextField onChange={(e) => {setQuery(e.target.value); console.log(e.target.value);
+      }} fullWidth placeholder="search user..." />
       <Card className="mt-2 absolute z-10  w-full px-5 space-y-3 overflow-y-scroll max-h-60 rounded ">
         {searchUsers && searchUsers.map((user) => (
           <MenuList>

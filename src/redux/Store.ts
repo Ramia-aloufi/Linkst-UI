@@ -7,6 +7,7 @@ import { MessageReducer } from "./message/MessageSlice";
 import { UserReducer } from "./user/UserSlice";
 import { ReelsReducer } from "./reels/ReelsSlice";
 import { StoryReducer } from "./story/StorySlice";
+import { ProjectReducer } from "./project/ProjectSlice";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,8 @@ const store = configureStore({
     user:UserReducer,
     reels: ReelsReducer, 
     story: StoryReducer,
+    project: ProjectReducer,
+
   },
 });
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,7 +1,7 @@
 import { createSlice, isRejectedWithValue } from "@reduxjs/toolkit"
 import type { ApiError } from "../../model/ApiError"
 import type { User, UserInfo } from "../../model/User"
-import { followUser, getMe, getUserByFullName, getUserById, getUsersStory, searchUser, updateUser } from "./UserService"
+import { followUser, getMe, getSomeUsers, getUserByFullName, getUserById, getUsersStory, searchUser, updateUser } from "./UserService"
 import type { UserStory } from "../../model/UsersStory"
 
 type InitialStateType = {
@@ -11,6 +11,7 @@ type InitialStateType = {
     usersStories: UserStory[] | null
     loading: boolean
     error: ApiError | null
+    someUsers: UserInfo[] | null
 }
 
 
@@ -20,7 +21,8 @@ const initialState: InitialStateType = {
     user: null,
     usersStories: null,
     loading: false,
-    error: null
+    error: null,
+    someUsers: null,
 }
 
 const userSlice = createSlice({
@@ -50,6 +52,10 @@ const userSlice = createSlice({
             .addCase(followUser.fulfilled,(state,action)=>{
                 state.me = action.payload
 
+            })
+            .addCase(getSomeUsers.fulfilled, (state, action) => {
+                    state.someUsers = action.payload.filter(user => user.id !== state.me?.id).reverse().slice(0, 5);
+                
             })
             .addMatcher(
                 (action) => action.type.endsWith('/pending'),

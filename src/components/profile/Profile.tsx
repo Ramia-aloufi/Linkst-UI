@@ -15,9 +15,12 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { logOut } from "../../redux/auth/AuthSlice";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import type { UUID } from "crypto";
+import ProjectSection from "./ProjectSection";
 const tabs = [
   { value: "post", label: "Post" },
-  { value: "reels", label: "Reels" }
+  { value: "reels", label: "Reels" },
+  { value: "projects", label: "Projects" },
+  { value: "certifications", label: "Certifications" }
 ]
 
 const Profile = () => {
@@ -73,19 +76,19 @@ const Profile = () => {
       dispatch(logOut())
     } else if (actionType == "Delete") {
       if (id)
-        dispatch(deletePost(id)).unwrap().then((data)=>{
-        if (fullName)
-        dispatch(getUserByFullName(fullName));
-      alert(data)
+        dispatch(deletePost(id)).unwrap().then((data) => {
+          if (fullName)
+            dispatch(getUserByFullName(fullName));
+          alert(data)
         })
       setId(null)
     } else {
       if (id)
-        dispatch(deleteReel(id)).unwrap().then((data)=>{
-        if (fullName)
-        dispatch(getUserByFullName(fullName));
-      alert(data)
-      
+        dispatch(deleteReel(id)).unwrap().then((data) => {
+          if (fullName)
+            dispatch(getUserByFullName(fullName));
+          alert(data)
+
         })
     }
     setIsAction(false)
@@ -214,6 +217,12 @@ const Profile = () => {
                 </div>
               ))}
             </div>}
+            {/* <ProjectSection /> */}
+            {value == "projects" && (
+              <div className="">
+                <ProjectSection id={user?.id} />
+              </div>
+            )}
           </div>
         </section>
       </div>

@@ -18,7 +18,7 @@ const UserChats = () => {
 
 
     if (!chat || chat.length === 0) {
-        return <span>Start chatting</span>;
+        return <span className="text-gray-500 flex h-full justify-between items-center">No user Selected</span>;
     }
 
     return (
